@@ -56,6 +56,10 @@ export default function SecurityIntelPanel({ results }: SecurityIntelPanelProps)
 
     const run = async () => {
       for (const ip of ips) {
+        // Skip invalid IPs
+        const isValidIp = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip) || /^[a-fA-F0-9:]+$/.test(ip);
+        if (!isValidIp || ip === '-') continue;
+
         // IPQS: use Vite proxy
         if (!ipqs[ip]) {
           try {
@@ -142,7 +146,7 @@ export default function SecurityIntelPanel({ results }: SecurityIntelPanelProps)
               const isp = (ipqsData as any)?.ISP || (ipqsData as any)?.isp || (ipqsData as any)?.organization || '-';
               const listedCount = (dnsblData as any)?.listedCount as number | undefined;
               const listedZones = ((dnsblData as any)?.results || [])
-                .filter((z: DnsblItem) => z.listed)
+                .filter((z: DnsblItem | null) => z && z.listed)
                 .map((z: DnsblItem) => z.zone);
 
               const hasVpnProxy = isVpn || isProxy || isTor;
