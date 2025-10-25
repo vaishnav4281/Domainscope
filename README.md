@@ -4,8 +4,8 @@
 
 ### *OSINT • DNS • WHOIS • Threat Intelligence*
 
-> 🧠 **DomainScope** is a next-gen **Domain & IP Intelligence Toolkit** for security researchers, developers, and OSINT enthusiasts.
-> Perform **deep domain reconnaissance**, **threat detection**, and **metadata analysis** — all through a sleek, modern dashboard.
+> 🧠 **DomainScope** is a next-gen **Domain & IP Intelligence Toolkit** for cybersecurity researchers, OSINT enthusiasts, and hackers.
+> Perform **deep domain reconnaissance**, **threat detection**, **metadata extraction**, and **blacklist checks** through a sleek, modern interface.
 
 Built with 💙 **React + TypeScript + shadcn/ui + Vite**
 
@@ -22,83 +22,97 @@ Built with 💙 **React + TypeScript + shadcn/ui + Vite**
 
 ---
 
-## 💫 **Tagline**
-
-> ⚡ *“The Hacker’s Lens for Domain Intelligence — Analyze. Detect. Secure.”*
+## 🛡️ DomainScope — Advanced Domain & IP OSINT for Security Professionals
 
 ---
 
 ## 🖼️ **Screenshots / Visuals**
 
-*(Replace these placeholders with your actual screenshots)*
+*(Replace with actual images)*
 
-**Dashboard / Hero Screen:**
-![Dashboard Placeholder](https://via.placeholder.com/800x400?text=DomainScope+Dashboard)
+**Dashboard Overview:**
+![Dashboard Placeholder](https://via.placeholder.com/900x400?text=DomainScope+Dashboard)
 
-**Scan Results / Charts:**
-![Scan Results Placeholder](https://via.placeholder.com/800x400?text=Scan+Results)
+**Scan Results / Threat Analysis:**
+![Scan Results Placeholder](https://via.placeholder.com/900x400?text=Scan+Results)
 
 **Bulk Scan / API Integration:**
-![Bulk Scan Placeholder](https://via.placeholder.com/800x400?text=Bulk+Scan)
+![Bulk Scan Placeholder](https://via.placeholder.com/900x400?text=Bulk+Scan)
 
 ---
 
 ## ✨ **Why DomainScope?**
 
-* 🔍 **Deep Domain Analysis** — Single or bulk scans, historical tracking.
-* 🧠 **Intelligence Integration** — VirusTotal, IPQS, AbuseIPDB, DNSBL, WHOIS, Metascraper.
-* 📊 **Visual Insights** — Interactive charts, result panels, live updates.
-* 🌙 **Modern UI** — Dark mode, responsive design, sleek iconography.
-* 🕵️ **Hacker-Friendly** — Designed for OSINT, recon, and cyber research.
+* 🔍 **Deep Domain & IP Recon** — Single and bulk scans
+* 🧠 **Multiple Intelligence Sources** — VirusTotal, IPQS, AbuseIPDB, DNSBL, WHOIS, Metascraper
+* 📊 **Visual Insights** — Interactive charts and graphs
+* 🌙 **Modern UI** — Dark mode, responsive design, hacker-friendly aesthetics
+* 🕵️ **Historical Tracking** — Compare past scans to detect trends
+* ⚡ **Real-Time Feedback** — Live scan updates & notifications
 
 ---
 
 ## 🚀 **Feature Highlights**
 
-| Emoji | Feature            | Description                                       |
-| :---: | :----------------- | :------------------------------------------------ |
-|   🔍  | Single Domain Scan | Deep analysis of individual domains or IPs.       |
-|   📂  | Bulk Domain Scan   | Upload `.txt` to scan multiple domains at once.   |
-|   🕒  | Historical Results | Track and compare previous scan results.          |
-|   ⚡   | Real-Time Feedback | Live updates while scanning domains.              |
-|   🧬  | VirusTotal         | Malware & threat detection.                       |
-|   🚨  | IPQS               | Detect fraudulent or suspicious IPs.              |
-|   🧾  | AbuseIPDB          | Check reported abusive IP addresses.              |
-|   🧿  | DNSBL              | Check domain/IP against major blacklists.         |
-|   🧭  | WHOIS              | Domain ownership and registration data.           |
-|   🪞  | Metascraper        | Extract metadata like title, description, images. |
-|   🌙  | Dark Mode          | Automatic or manual toggle.                       |
-|   📊  | Interactive Charts | Visualize results and trends.                     |
+| Emoji | Feature             | Description                                           |
+| :---: | :------------------ | :---------------------------------------------------- |
+|   🔍  | Single Domain Scan  | Analyze any domain or IP in-depth.                    |
+|   📂  | Bulk Domain Scan    | Scan multiple domains from `.txt` lists.              |
+|   🕒  | Historical Results  | Track and compare scan history.                       |
+|   ⚡   | Real-Time Feedback  | Live updates during scans.                            |
+|   🧬  | VirusTotal          | Malware & threat detection.                           |
+|   🚨  | IPQS                | Fraud & IP reputation analysis.                       |
+|   🧾  | AbuseIPDB           | Track reported abusive IP addresses.                  |
+|   🧿  | DNSBL               | Verify domain/IP against blacklists.                  |
+|   🧭  | WHOIS               | Domain registration and ownership info.               |
+|   🪞  | Metascraper         | Extract metadata: title, description, images.         |
+|   🌙  | Dark Mode           | Automatic system detection + manual toggle.           |
+|   📊  | Interactive Charts  | Visualize trends, stats, and scan data.               |
+|  🛡️  | Security Score      | Get a summarized security score per domain/IP.        |
+|   🔗  | URL & Link Analysis | Check external links & potential phishing indicators. |
 
 ---
 
-## ⚙️ **Tech Stack**
+## 🛠️ **Tech Stack**
 
-| Category         | Technologies                                                             |
-| :--------------- | :----------------------------------------------------------------------- |
-| ⚛️ Frontend      | React 18 · TypeScript 5 · Vite 7                                         |
-| 🎨 UI / Styling  | TailwindCSS 3 · shadcn/ui · Radix UI · Lucide Icons                      |
-| 📈 Charts & Data | Recharts 2 · TanStack Query 5                                            |
-| 🧰 Backend / API | Express.js · VirusTotal · IPQS · AbuseIPDB · Metascraper · WHOIS · DNSBL |
-| 🧹 Dev Tools     | ESLint · TypeScript ESLint · PostCSS · Autoprefixer                      |
-
----
-
-## 📊 **Comparison Table with Other OSINT Tools**
-
-| Tool            | Focus             | Bulk Scan | Malware / Threat | DNSBL / Blacklist | WHOIS | Metadata | Modern UI | Notes                          |
-| :-------------- | :---------------- | :-------: | :--------------: | :---------------: | :---: | :------: | :-------: | :----------------------------- |
-| **DomainScope** | Domain & IP Recon |     ✅     |         ✅        |         ✅         |   ✅   |     ✅    |     ✅     | Full-stack OSINT toolkit       |
-| SpiderFoot      | OSINT Recon       |     ✅     |         ✅        |         ✅         |   ✅   |     ✅    |     ⚠️    | Heavy, complex UI              |
-| Recon-NG        | Framework         |     ✅     |        ⚠️        |         ⚠️        |   ✅   |    ⚠️    |     ❌     | CLI-based, not web             |
-| Shodan          | IoT / IP Recon    |     ⚠️    |         ✅        |         ❌         |   ⚠️  |     ❌    |     ⚠️    | Focused on IoT / IP, paid API  |
-| Maltego         | OSINT Graph       |     ⚠️    |         ✅        |         ⚠️        |   ✅   |    ⚠️    |     ⚠️    | Enterprise-focused, commercial |
-
-> ✅ = Fully supported, ⚠️ = Limited/Partial, ❌ = Not available
+| Layer            | Tools / Libraries                                                        | Emoji |
+| :--------------- | :----------------------------------------------------------------------- | :---: |
+| ⚛️ Frontend      | React 18 · TypeScript 5 · Vite 7                                         |   💻  |
+| 🎨 UI / Styling  | TailwindCSS 3 · shadcn/ui · Radix UI · Lucide Icons                      |   🎨  |
+| 📈 Charts & Data | Recharts 2 · TanStack Query 5                                            |   📊  |
+| 🧰 Backend / API | Express.js · VirusTotal · IPQS · AbuseIPDB · Metascraper · WHOIS · DNSBL |  🛠️  |
+| 🧹 Dev Tools     | ESLint · TypeScript ESLint · PostCSS · Autoprefixer                      |   🧹  |
 
 ---
 
-## 🛠️ **Setup & Installation**
+## 🔗 **API & Integration Details**
+
+| Service     | Purpose                   | Required API Key | Notes                                    |
+| :---------- | :------------------------ | :--------------- | :--------------------------------------- |
+| VirusTotal  | Malware & Threat Analysis | ✅                | Free & Premium plans                     |
+| IPQS        | IP & Fraud Reputation     | ✅                | Includes VPN/Proxy detection             |
+| AbuseIPDB   | Track Abusive IPs         | ✅                | API Rate-limited                         |
+| DNSBL       | Domain/IP Blacklist       | ❌                | No key needed, public blacklists         |
+| WHOIS       | Domain Registration Info  | ❌                | Query limits may apply                   |
+| Metascraper | Website Metadata          | ❌                | Scrapes page titles, description, images |
+
+---
+
+## 📊 **Comparison with Other OSINT Tools**
+
+| Tool            | Focus             | Bulk Scan | Malware / Threat | DNSBL / Blacklist | WHOIS | Metadata | Modern UI | Notes                         |
+| :-------------- | :---------------- | :-------: | :--------------: | :---------------: | :---: | :------: | :-------: | :---------------------------- |
+| **DomainScope** | Domain & IP Recon |     ✅     |         ✅        |         ✅         |   ✅   |     ✅    |     ✅     | Full-stack OSINT web app      |
+| SpiderFoot      | OSINT Recon       |     ✅     |         ✅        |         ✅         |   ✅   |     ✅    |     ⚠️    | Heavy, complex UI             |
+| Recon-NG        | Framework         |     ✅     |        ⚠️        |         ⚠️        |   ✅   |    ⚠️    |     ❌     | CLI-based, not web            |
+| Shodan          | IoT / IP Recon    |     ⚠️    |         ✅        |         ❌         |   ⚠️  |     ❌    |     ⚠️    | Focused on IoT / IP, paid API |
+| Maltego         | OSINT Graph       |     ⚠️    |         ✅        |         ⚠️        |   ✅   |    ⚠️    |     ⚠️    | Enterprise-focused            |
+
+> ✅ = Fully supported, ⚠️ = Partial, ❌ = Not available
+
+---
+
+## ⚙️ **Setup & Installation**
 
 ### Prerequisites
 
@@ -118,7 +132,7 @@ npm install
 # or
 bun install
 
-# Configure environment variables
+# Copy env template
 cp .env.example .env
 ```
 
@@ -133,7 +147,7 @@ ABUSEIPDB_API_KEY=your_abuseipdb_key
 VITE_ABUSEIPDB_API_KEY=your_abuseipdb_key
 ```
 
-### Run Dev Server
+### Start Dev Server
 
 ```bash
 npm run dev
@@ -141,9 +155,9 @@ npm run dev
 bun run dev
 ```
 
-Visit **[http://localhost:5173](http://localhost:5173)**
+Open **[http://localhost:5173](http://localhost:5173)**
 
-### DNSBL Server (Optional)
+### DNSBL Dev Server (Optional)
 
 ```bash
 npm run dev:dnsbl
@@ -151,7 +165,7 @@ npm run dev:dnsbl
 
 ---
 
-## 🖼️ **Project Structure**
+## 📁 **Project Structure**
 
 ```
 domainscope/
@@ -163,7 +177,7 @@ domainscope/
 │   ├── lib/                # Utilities
 │   └── main.tsx            # React entry
 ├── public/                 # Static assets
-├── .env.example            # Env template
+├── .env.example            # Environment variables
 ├── package.json
 ├── tailwind.config.ts
 ├── tsconfig.json
@@ -175,10 +189,10 @@ domainscope/
 ## 🤝 **Contributing**
 
 1. Fork repo
-2. Create branch → `git checkout -b feature/awesome-feature`
+2. Create a branch → `git checkout -b feature/awesome-feature`
 3. Commit → `git commit -m "Add awesome feature"`
 4. Push → `git push origin feature/awesome-feature`
-5. Open a Pull Request
+5. Open Pull Request
 
 ---
 
@@ -190,7 +204,7 @@ MIT License — See [LICENSE](./LICENSE)
 
 ## 🌟 **Acknowledgements**
 
-* [shadcn/ui](https://ui.shadcn.com/) – UI components
+* [shadcn/ui](https://ui.shadcn.com/) – Modern UI components
 * [Radix UI](https://www.radix-ui.com/) – Accessible primitives
 * [TailwindCSS](https://tailwindcss.com) – Utility CSS
 * [Lucide Icons](https://lucide.dev) – Iconography
