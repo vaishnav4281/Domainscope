@@ -30,9 +30,20 @@ Built with 💙 **React + TypeScript + shadcn/ui + Vite**
 
 ## 🖼️ **Interface Preview**
 
-| Dashboard | Metadata Tabs | VirusTotal Panel | Security Intelligence |
-|------------|----------------|------------------|-----------------------|
-|<img width="1440" height="1024" alt="Mockup 6 (1)" src="https://github.com/user-attachments/assets/4d73162f-aa16-4179-88eb-6941219877af" />| <img width="1440" height="1024" alt="Group 1" src="https://github.com/user-attachments/assets/6c1cb3ca-e0c5-4374-b647-e69d1210a41b" />|<img width="1440" height="1024" alt="Mockup 7" src="https://github.com/user-attachments/assets/a4aba03e-563f-440e-83f5-4da139a5decc" />|<img width="1440" height="1024" alt="Group 2" src="https://github.com/user-attachments/assets/ef3fd739-60ff-48e6-b42d-d97be11faa13" />|
+## 🖼️ Interface Preview
+
+### Dashboard  
+<img width="100%" src="https://github.com/user-attachments/assets/4d73162f-aa16-4179-88eb-6941219877af" />
+
+### Metadata Tabs  
+<img width="100%" src="https://github.com/user-attachments/assets/6c1cb3ca-e0c5-4374-b647-e69d1210a41b" />
+
+### VirusTotal Panel  
+<img width="100%" src="https://github.com/user-attachments/assets/a4aba03e-563f-440e-83f5-4da139a5decc" />
+
+### Security Intelligence  
+<img width="100%" src="https://github.com/user-attachments/assets/ef3fd739-60ff-48e6-b42d-d97be11faa13" />
+
 
 ---
 
