@@ -2,7 +2,7 @@
 
 # 🌍 **DomainScope**
 
-### *OSINT • DNS • WHOIS • Threat Intelligence*
+### OSINT • DNS • WHOIS • Threat Intelligence
 
 > 🧠 **DomainScope** is a next-gen **Domain & IP Intelligence Toolkit** for cybersecurity researchers, OSINT enthusiasts, and hackers.
 > Perform **deep domain reconnaissance**, **threat detection**, **metadata extraction**, and **blacklist checks** through a sleek, modern interface.
