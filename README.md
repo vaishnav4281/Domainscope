@@ -26,20 +26,17 @@ Built with 💙 **React + TypeScript + shadcn/ui + Vite**
 
 
 
-## 🖼️ **Screenshots / Visuals**
 
-*(Replace with actual images)*
 
-**Dashboard Overview:**
-![Dashboard Placeholder](https://via.placeholder.com/900x400?text=DomainScope+Dashboard)
+## 🖼️ **Interface Preview**
 
-**Scan Results / Threat Analysis:**
-![Scan Results Placeholder](https://via.placeholder.com/900x400?text=Scan+Results)
-
-**Bulk Scan / API Integration:**
-![Bulk Scan Placeholder](https://via.placeholder.com/900x400?text=Bulk+Scan)
+| Dashboard | Metadata Tabs | VirusTotal Panel | Security Intelligence |
+|------------|----------------|------------------|-----------------------|
+|<img width="1440" height="1024" alt="464908732-03e08e4a-32c6-4700-93bb-d89c464a2bac" src="https://github.com/user-attachments/assets/2009d725-c480-43f3-9575-1b64fe198ff7" />
+) | ![Metadata](https://via.placeholder.com/400x230?text=Metadata+Tabs) | ![VirusTotal](https://via.placeholder.com/400x230?text=VirusTotal+Panel) |      |
 
 ---
+
 
 ## ✨ **Why DomainScope?**
 
