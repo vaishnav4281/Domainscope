@@ -22,9 +22,9 @@ Built with 💙 **React + TypeScript + shadcn/ui + Vite**
 
 ---
 
-## 🛡️ DomainScope — Advanced Domain & IP OSINT for Security Professionals
+## **🛡️ DomainScope — Advanced Domain & IP OSINT for Security Professionals**
 
----
+
 
 ## 🖼️ **Screenshots / Visuals**
 
