@@ -32,8 +32,7 @@ Built with 💙 **React + TypeScript + shadcn/ui + Vite**
 
 | Dashboard | Metadata Tabs | VirusTotal Panel | Security Intelligence |
 |------------|----------------|------------------|-----------------------|
-|<img width="1440" height="1024" alt="464908732-03e08e4a-32c6-4700-93bb-d89c464a2bac" src="https://github.com/user-attachments/assets/2009d725-c480-43f3-9575-1b64fe198ff7" />
-) | ![Metadata](https://via.placeholder.com/400x230?text=Metadata+Tabs) | ![VirusTotal](https://via.placeholder.com/400x230?text=VirusTotal+Panel) |      |
+|<img width="1440" height="1024" alt="Mockup 6 (1)" src="https://github.com/user-attachments/assets/4d73162f-aa16-4179-88eb-6941219877af" />| <img width="1440" height="1024" alt="Group 1" src="https://github.com/user-attachments/assets/6c1cb3ca-e0c5-4374-b647-e69d1210a41b" />|<img width="1440" height="1024" alt="Mockup 7" src="https://github.com/user-attachments/assets/a4aba03e-563f-440e-83f5-4da139a5decc" />|<img width="1440" height="1024" alt="Group 2" src="https://github.com/user-attachments/assets/ef3fd739-60ff-48e6-b42d-d97be11faa13" />|
 
 ---
 
