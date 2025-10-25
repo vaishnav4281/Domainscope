@@ -100,7 +100,7 @@ const Index = () => {
               </div>
               <div className="min-w-0">
                 <h1 className="text-base sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent leading-tight truncate">
-                  Domain Intelligence Toolkit
+                  Domain Scope
                 </h1>
                 <p className="text-[10px] sm:text-xs text-slate-600 dark:text-slate-400 mt-0.5 leading-tight">
                   OSINT • DNS • WHOIS • Security
@@ -264,7 +264,7 @@ const Index = () => {
             </div>
           </div>
           <div className="text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-8 space-y-1">
-            <div>© {new Date().getFullYear()} Domain Intelligence Toolkit</div>
+            <div>© {new Date().getFullYear()} Domain Scope</div>
             <div>
               Built by <span className="font-semibold bg-gradient-to-r from-red-600 to-blue-600 bg-clip-text text-transparent">Vaishnav K</span> •
               {' '}
