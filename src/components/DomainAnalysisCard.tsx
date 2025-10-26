@@ -165,9 +165,9 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
         }
 
         // Fallback: Use free ip-api.com for Country/ISP/VPN detection if IPQS failed
-        if (locCountry === '-' || locIsp === '-' || abuseScore === 0) {
+        if (locCountry === '-' || locIsp === '-') {
           try {
-            console.log('🔄 IPQS failed, trying free fallback (ip-api.com)...');
+            console.log('🔄 IPQS failed or incomplete, trying free fallback (ip-api.com)...');
             const ipApiRes = await fetch(`/api/ip-api/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,as,proxy,hosting,mobile`);
             if (ipApiRes.ok) {
               const ipApiData = await ipApiRes.json();
