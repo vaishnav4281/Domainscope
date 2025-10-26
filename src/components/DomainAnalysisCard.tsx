@@ -113,6 +113,10 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       let abuseScore = 0;
       let isVpnProxy = false;
       let locCountry = "-";
+      let locRegion = "-";
+      let locCity = "-";
+      let locLatitude = "-";
+      let locLongitude = "-";
       let locIsp = "-";
       const ipqsKey = import.meta.env.VITE_IPQS_API_KEY as string | undefined;
       const abuseKey = import.meta.env.VITE_ABUSEIPDB_API_KEY as string | undefined;
@@ -134,6 +138,10 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
               proxy: ipqs.proxy,
               tor: ipqs.tor,
               country_code: ipqs.country_code,
+              region: ipqs.region,
+              city: ipqs.city,
+              latitude: ipqs.latitude,
+              longitude: ipqs.longitude,
               ISP: ipqs.ISP
             });
             const fraud = typeof ipqs.fraud_score === 'number' ? ipqs.fraud_score : 0;
@@ -143,6 +151,10 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             const tor = Boolean(ipqs.tor);
             isVpnProxy = isVpnProxy || vpn || proxy || tor;
             locCountry = (ipqs.country_code || ipqs.country || locCountry) as string;
+            locRegion = (ipqs.region || locRegion) as string;
+            locCity = (ipqs.city || locCity) as string;
+            locLatitude = (ipqs.latitude !== undefined && ipqs.latitude !== null) ? String(ipqs.latitude) : locLatitude;
+            locLongitude = (ipqs.longitude !== undefined && ipqs.longitude !== null) ? String(ipqs.longitude) : locLongitude;
             locIsp = (ipqs.ISP || ipqs.isp || ipqs.organization || locIsp) as string;
           } else {
             const errorText = await ipqsRes.text();
@@ -183,10 +195,10 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
         is_vpn_proxy: isVpnProxy,
         ip_address: aRecord,
         country: locCountry,
-        region: "-",
-        city: "-",
-        longitude: "-",
-        latitude: "-",
+        region: locRegion,
+        city: locCity,
+        longitude: locLongitude,
+        latitude: locLatitude,
         isp: locIsp,
         timestamp: new Date().toLocaleString(),
       } as any;

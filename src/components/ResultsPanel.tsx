@@ -54,17 +54,37 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
     }
 
     const headers = [
-      "domain", "created", "expires", "domain_age", "registrar", 
-      "name_servers", "dns_records", "asn", "abuse_score", "is_vpn_proxy",
-      "ip_address", "country", "region", "city", "longitude", "latitude", "isp",
-      // VirusTotal summary (optional)
-      "vt_reputation", "vt_malicious", "vt_suspicious", "vt_harmless", "vt_risk",
-      "timestamp"
+      // Domain Information
+      "Domain", 
+      "Domain Age", 
+      "Created Date", 
+      "Expires Date", 
+      "Registrar",
+      // Network Information
+      "IP Address",
+      "Name Servers",
+      "DNS Records",
+      // Geolocation
+      "Country",
+      "Region",
+      "City",
+      "Latitude",
+      "Longitude",
+      "ISP",
+      // Security Intelligence
+      "VPN/Proxy Detected",
+      "Abuse Score",
+      "VT Reputation",
+      "VT Malicious Count",
+      "VT Risk Level",
+      // Metadata
+      "Scan Timestamp"
     ];
     
     const escapeCsv = (val: any) => {
       const s = val === null || val === undefined ? '' : String(val);
-      if (/[",\n\r]/.test(s)) {
+      // Quote fields that contain commas, semicolons, quotes, newlines, or start with special characters
+      if (/[",;\n\r]/.test(s) || s.startsWith(' ') || s.endsWith(' ')) {
         return '"' + s.replace(/"/g, '""') + '"';
       }
       return s;
@@ -76,34 +96,35 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
         const vt = vtSummaryByDomain ? vtSummaryByDomain[result.domain] : undefined;
         const vt_rep = vt?.reputation ?? "-";
         const vt_mal = vt?.malicious ?? "-";
-        const vt_susp = vt?.suspicious ?? "-";
-        const vt_har = vt?.harmless ?? "-";
         const vt_risk = vt?.risk_level ?? "-";
+        
         return [
-        escapeCsv(result.domain),
-        escapeCsv(result.created),
-        escapeCsv(result.expires),
-        escapeCsv(result.domain_age),
-        escapeCsv(result.registrar),
-        escapeCsv((result.name_servers || []).join("; ")),
-        escapeCsv(result.dns_records || "-"),
-        escapeCsv(result.asn || "-"),
-        escapeCsv(result.abuse_score),
-        escapeCsv(result.is_vpn_proxy),
-        escapeCsv(result.ip_address),
-        escapeCsv(result.country),
-        escapeCsv(result.region || "-"),
-        escapeCsv(result.city || "-"),
-        escapeCsv(result.longitude || "-"),
-        escapeCsv(result.latitude || "-"),
-        escapeCsv(result.isp),
-        escapeCsv(vt_rep),
-        escapeCsv(vt_mal),
-        escapeCsv(vt_susp),
-        escapeCsv(vt_har),
-        escapeCsv(vt_risk),
-        escapeCsv(result.timestamp)
-      ].join(",");
+          // Domain Information
+          escapeCsv(result.domain),
+          escapeCsv(result.domain_age),
+          escapeCsv(result.created),
+          escapeCsv(result.expires),
+          escapeCsv(result.registrar),
+          // Network Information
+          escapeCsv(result.ip_address),
+          escapeCsv((result.name_servers || []).join("; ")),
+          escapeCsv(result.dns_records || "-"),
+          // Geolocation
+          escapeCsv(result.country),
+          escapeCsv(result.region || "-"),
+          escapeCsv(result.city || "-"),
+          escapeCsv(result.latitude || "-"),
+          escapeCsv(result.longitude || "-"),
+          escapeCsv(result.isp),
+          // Security Intelligence
+          escapeCsv(result.is_vpn_proxy),
+          escapeCsv(result.abuse_score),
+          escapeCsv(vt_rep),
+          escapeCsv(vt_mal),
+          escapeCsv(vt_risk),
+          // Metadata
+          escapeCsv(result.timestamp)
+        ].join(",");
       })
     ].join("\n");
 

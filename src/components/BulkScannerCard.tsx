@@ -129,6 +129,10 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults 
         let abuseScore = 0;
         let isVpnProxy = false;
         let locCountry = "-";
+        let locRegion = "-";
+        let locCity = "-";
+        let locLatitude = "-";
+        let locLongitude = "-";
         let locIsp = "-";
         const ip = aRecord;
         const isIp = /^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip) || /^[a-fA-F0-9:]+$/.test(ip);
@@ -144,6 +148,10 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults 
               const tor = Boolean(ipqs.tor);
               isVpnProxy = isVpnProxy || vpn || proxy || tor;
               locCountry = (ipqs.country_code || ipqs.country || locCountry) as string;
+              locRegion = (ipqs.region || locRegion) as string;
+              locCity = (ipqs.city || locCity) as string;
+              locLatitude = (ipqs.latitude !== undefined && ipqs.latitude !== null) ? String(ipqs.latitude) : locLatitude;
+              locLongitude = (ipqs.longitude !== undefined && ipqs.longitude !== null) ? String(ipqs.longitude) : locLongitude;
               locIsp = (ipqs.ISP || ipqs.isp || ipqs.organization || locIsp) as string;
             }
           } catch {}
@@ -169,10 +177,10 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults 
           is_vpn_proxy: isVpnProxy,
           ip_address: aRecord,
           country: locCountry,
-          region: "-",
-          city: "-",
-          longitude: "-",
-          latitude: "-",
+          region: locRegion,
+          city: locCity,
+          longitude: locLongitude,
+          latitude: locLatitude,
           isp: locIsp,
           timestamp: new Date().toLocaleString(),
         } as any;
