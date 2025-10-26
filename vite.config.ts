@@ -64,6 +64,7 @@ export default defineConfig(({ mode }) => {
             // Track which key index to use (rotates on quota failures)
             // Start with 0, but will auto-rotate if quota exceeded
             let currentKeyIndex = 0;
+            let keyTestComplete = false;
             
             // Quick check: test key 1, if exhausted start with key 2
             if (ipqsKeys.length > 1) {
@@ -73,20 +74,34 @@ export default defineConfig(({ mode }) => {
                 .then((data: any) => {
                   if (data.success === false && data.message?.includes('exceeded')) {
                     currentKeyIndex = 1;
-                    console.warn('[vite] Key #1 quota exceeded, starting with key #2');
+                    console.warn('[vite] ⚠️ Key #1 quota exceeded, starting with key #2');
                   } else {
-                    console.log('[vite] Key #1 is working, using it first');
+                    console.log('[vite] ✅ Key #1 is working, using it first');
                   }
+                  keyTestComplete = true;
                 })
-                .catch(() => console.warn('[vite] Could not test key #1'));
+                .catch(() => {
+                  console.warn('[vite] ⚠️ Could not test key #1, will use key #2 as fallback');
+                  currentKeyIndex = 1;
+                  keyTestComplete = true;
+                });
+            } else {
+              keyTestComplete = true;
             }
             
-            proxy.on('proxyReq', (proxyReq, req, res) => {
+            proxy.on('proxyReq', async (proxyReq, req, res) => {
               const ip = new URL(`http://localhost${req.url}`).searchParams.get('ip');
               if (!ip) {
                 console.error('[vite] IPQS proxy: missing ip parameter');
                 proxyReq.path = '/api/json/ip/invalid/invalid';
                 return;
+              }
+              
+              // Wait for key test to complete (max 3 seconds)
+              let waited = 0;
+              while (!keyTestComplete && waited < 30) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                waited++;
               }
               
               const currentKey = ipqsKeys[currentKeyIndex];

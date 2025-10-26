@@ -132,7 +132,8 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           console.log('📡 IPQS response status:', ipqsRes.status);
           if (ipqsRes.ok) {
             const ipqs = await ipqsRes.json();
-            console.log('✅ IPQS data:', {
+            console.log('✅ IPQS full response:', ipqs);
+            console.log('✅ IPQS extracted data:', {
               fraud_score: ipqs.fraud_score,
               vpn: ipqs.vpn,
               proxy: ipqs.proxy,
