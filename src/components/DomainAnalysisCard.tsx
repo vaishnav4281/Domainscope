@@ -157,6 +157,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             locLatitude = (ipqs.latitude !== undefined && ipqs.latitude !== null) ? String(ipqs.latitude) : locLatitude;
             locLongitude = (ipqs.longitude !== undefined && ipqs.longitude !== null) ? String(ipqs.longitude) : locLongitude;
             locIsp = (ipqs.ISP || ipqs.isp || ipqs.organization || locIsp) as string;
+            console.log('✅ After IPQS processing:', { locCountry, locRegion, locCity, locIsp, abuseScore, isVpnProxy });
           } else {
             const errorText = await ipqsRes.text();
             console.error('❌ IPQS failed:', ipqsRes.status, errorText.substring(0, 200));
