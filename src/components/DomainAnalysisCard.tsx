@@ -164,11 +164,16 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           console.error('❌ IPQS error:', err);
         }
 
-        // Fallback: Use free ip-api.com for Country/ISP/VPN detection if IPQS failed
+        // Fallback: Use free ip-api.com for Country/ISP/VPN detection if IPQS missed some fields
         if (locCountry === '-' || locIsp === '-') {
           try {
-            console.log('🔄 IPQS failed or incomplete, trying free fallback (ip-api.com)...');
-            const ipApiRes = await fetch(`/api/ip-api/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,as,proxy,hosting,mobile`);
+            console.log('🔄 Enriching geo/ISP via ip-api.com...');
+            let ipApiRes = await fetch(`/api/ip-api/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,as,proxy,hosting,mobile`);
+            if (!ipApiRes.ok) {
+              // Secondary attempt: call ip-api.com directly (bypass proxy) in case of proxy rewrite issues
+              console.warn('⚠️ ip-api proxy returned', ipApiRes.status, '- retrying direct fetch');
+              ipApiRes = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,as,proxy,hosting,mobile`);
+            }
             if (ipApiRes.ok) {
               const ipApiData = await ipApiRes.json();
               if (ipApiData.status === 'success') {
@@ -189,7 +194,6 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
                 }
                 
                 // Basic risk score estimation (0-100)
-                // Hosting IPs and proxies get higher scores
                 let estimatedRisk = 0;
                 if (isHostingFallback) estimatedRisk += 40;
                 if (isProxyFallback) estimatedRisk += 50;
@@ -200,7 +204,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
               }
             }
           } catch (fallbackErr) {
-            console.warn('⚠️ ip-api.com fallback also failed:', fallbackErr);
+            console.warn('⚠️ ip-api.com enrichment failed:', fallbackErr);
           }
         }
 
