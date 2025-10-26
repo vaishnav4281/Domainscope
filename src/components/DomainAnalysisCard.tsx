@@ -164,49 +164,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           console.error('❌ IPQS error:', err);
         }
 
-        // Fallback: Use free ip-api.com for Country/ISP/VPN detection if IPQS missed some fields
-        if (locCountry === '-' || locIsp === '-') {
-          try {
-            console.log('🔄 Enriching geo/ISP via ip-api.com...');
-            let ipApiRes = await fetch(`/api/ip-api/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,as,proxy,hosting,mobile`);
-            if (!ipApiRes.ok) {
-              // Secondary attempt: call ip-api.com directly (bypass proxy) in case of proxy rewrite issues
-              console.warn('⚠️ ip-api proxy returned', ipApiRes.status, '- retrying direct fetch');
-              ipApiRes = await fetch(`http://ip-api.com/json/${encodeURIComponent(ip)}?fields=status,country,countryCode,region,regionName,city,lat,lon,isp,org,as,proxy,hosting,mobile`);
-            }
-            if (ipApiRes.ok) {
-              const ipApiData = await ipApiRes.json();
-              if (ipApiData.status === 'success') {
-                console.log('✅ ip-api.com data:', ipApiData);
-                if (locCountry === '-') locCountry = ipApiData.countryCode || ipApiData.country || locCountry;
-                if (locRegion === '-') locRegion = ipApiData.regionName || ipApiData.region || locRegion;
-                if (locCity === '-') locCity = ipApiData.city || locCity;
-                if (locLatitude === '-' && ipApiData.lat !== undefined) locLatitude = String(ipApiData.lat);
-                if (locLongitude === '-' && ipApiData.lon !== undefined) locLongitude = String(ipApiData.lon);
-                if (locIsp === '-') locIsp = ipApiData.isp || ipApiData.org || locIsp;
-                
-                // VPN/Proxy detection from ip-api.com
-                const isProxyFallback = Boolean(ipApiData.proxy);
-                const isHostingFallback = Boolean(ipApiData.hosting);
-                if (isProxyFallback || isHostingFallback) {
-                  isVpnProxy = true;
-                  console.log('⚠️ Proxy/Hosting detected:', { proxy: isProxyFallback, hosting: isHostingFallback });
-                }
-                
-                // Basic risk score estimation (0-100)
-                let estimatedRisk = 0;
-                if (isHostingFallback) estimatedRisk += 40;
-                if (isProxyFallback) estimatedRisk += 50;
-                if (estimatedRisk > 0 && abuseScore === 0) {
-                  abuseScore = estimatedRisk;
-                  console.log('📊 Estimated risk score from fallback:', estimatedRisk);
-                }
-              }
-            }
-          } catch (fallbackErr) {
-            console.warn('⚠️ ip-api.com enrichment failed:', fallbackErr);
-          }
-        }
+        // No external fallback needed - VirusTotal provides all necessary data
 
         try {
           const abuseUrl = `/api/abuseipdb/check?ip=${encodeURIComponent(ip)}`;
