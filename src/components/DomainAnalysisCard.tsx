@@ -132,8 +132,8 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           console.log('📡 IPQS response status:', ipqsRes.status);
           if (ipqsRes.ok) {
             const ipqs = await ipqsRes.json();
-            console.log('✅ IPQS full response:', ipqs);
-            console.log('✅ IPQS extracted data:', {
+            console.log('✅ IPQS full response:', JSON.stringify(ipqs, null, 2));
+            console.log('✅ IPQS extracted data:', JSON.stringify({
               fraud_score: ipqs.fraud_score,
               vpn: ipqs.vpn,
               proxy: ipqs.proxy,
@@ -144,7 +144,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
               latitude: ipqs.latitude,
               longitude: ipqs.longitude,
               ISP: ipqs.ISP
-            });
+            }, null, 2));
             const fraud = typeof ipqs.fraud_score === 'number' ? ipqs.fraud_score : 0;
             abuseScore = Math.max(abuseScore, fraud);
             const vpn = Boolean(ipqs.vpn);
@@ -157,7 +157,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             locLatitude = (ipqs.latitude !== undefined && ipqs.latitude !== null) ? String(ipqs.latitude) : locLatitude;
             locLongitude = (ipqs.longitude !== undefined && ipqs.longitude !== null) ? String(ipqs.longitude) : locLongitude;
             locIsp = (ipqs.ISP || ipqs.isp || ipqs.organization || locIsp) as string;
-            console.log('✅ After IPQS processing:', { locCountry, locRegion, locCity, locIsp, abuseScore, isVpnProxy });
+            console.log('✅ After IPQS processing:', JSON.stringify({ locCountry, locRegion, locCity, locIsp, abuseScore, isVpnProxy }, null, 2));
           } else {
             const errorText = await ipqsRes.text();
             console.error('❌ IPQS failed:', ipqsRes.status, errorText.substring(0, 200));
