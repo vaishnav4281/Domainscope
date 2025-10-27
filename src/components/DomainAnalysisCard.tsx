@@ -41,6 +41,11 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       return;
     }
 
+    // Sanitize domain: remove protocol and trailing slashes
+    const sanitizedDomain = domain.trim()
+      .replace(/^https?:\/\//, '')  // Remove http:// or https://
+      .replace(/\/+$/, '');          // Remove trailing slashes
+
     setIsScanning(true);
     
     try {
@@ -48,7 +53,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       let vtData: any = null;
       let attrs: any = {};
       try {
-        const vtUrl = `/api/vt/domains/${encodeURIComponent(domain.trim())}`;
+        const vtUrl = `/api/vt/domains/${encodeURIComponent(sanitizedDomain)}`;
         let vtResponse = await fetch(vtUrl);
         if (!vtResponse.ok) {
           // Dev-only fallback: call VT directly if proxy didn't inject the key
@@ -57,7 +62,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             import.meta.env.DEV &&
             import.meta.env.VITE_VIRUSTOTAL_API_KEY
           ) {
-            const direct = await fetch(`https://www.virustotal.com/api/v3/domains/${encodeURIComponent(domain.trim())}`, {
+            const direct = await fetch(`https://www.virustotal.com/api/v3/domains/${encodeURIComponent(sanitizedDomain)}`, {
               headers: { 'x-apikey': import.meta.env.VITE_VIRUSTOTAL_API_KEY }
             });
             if (direct.ok) {
@@ -99,7 +104,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       let whoisExpires = attrs.last_modification_date ? new Date(attrs.last_modification_date * 1000).toLocaleString() : "-";
       let whoisRegistrar = attrs.registrar || "-";
       try {
-        const whoisRes = await fetch(`/api/whois?domain=${encodeURIComponent(domain.trim())}`);
+        const whoisRes = await fetch(`/api/whois?domain=${encodeURIComponent(sanitizedDomain)}`);
         if (whoisRes.ok) {
           const whoisData = await whoisRes.json();
           const wd = whoisData || {};
@@ -207,7 +212,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
 
       const result = {
         id: Date.now(),
-        domain: domain.trim(),
+        domain: sanitizedDomain,
         created: whoisCreated,
         expires: whoisExpires,
         domain_age: whoisCreated !== "-" ? computeAge(whoisCreated) : "-",
@@ -231,7 +236,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       // Send full VirusTotal result
       const virusTotalResult = {
         id: Date.now() + 2,
-        domain: domain.trim(),
+        domain: sanitizedDomain,
         timestamp: new Date().toLocaleString(),
         reputation: attrs.reputation || 0,
         last_analysis_stats: attrs.last_analysis_stats || {},
@@ -270,7 +275,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       // Kick off Metascraper in background (non-blocking)
       void (async () => {
         try {
-          const targetUrl = `https://${domain.trim()}`;
+          const targetUrl = `https://${sanitizedDomain}`;
           const corsProxies = [
             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
             `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
@@ -298,7 +303,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             throw lastError || new Error('All CORS proxies failed');
           }
           const html = await metascraperResponse.text();
-          const metaData: any = { id: Date.now() + 1, domain: domain.trim(), timestamp: new Date().toLocaleString() };
+          const metaData: any = { id: Date.now() + 1, domain: sanitizedDomain, timestamp: new Date().toLocaleString() };
           const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
           const ogTitleMatch = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
           const twitterTitleMatch = html.match(/<meta[^>]*name=["']twitter:title["'][^>]*content=["']([^"']+)["']/i);
@@ -350,12 +355,12 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           const faviconMatch = html.match(/<link[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["']/i);
           if (faviconMatch) {
             const faviconUrl = faviconMatch[1].trim();
-            metaData.favicon = faviconUrl.startsWith('http') ? faviconUrl : `https://${domain.trim()}${faviconUrl.startsWith('/') ? '' : '/'}${faviconUrl}`;
+            metaData.favicon = faviconUrl.startsWith('http') ? faviconUrl : `https://${sanitizedDomain}${faviconUrl.startsWith('/') ? '' : '/'}${faviconUrl}`;
           }
           const appleTouchMatch = html.match(/<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/i);
           if (appleTouchMatch) {
             const appleUrl = appleTouchMatch[1].trim();
-            metaData.logo = appleUrl.startsWith('http') ? appleUrl : `https://${domain.trim()}${appleUrl.startsWith('/') ? '' : '/'}${appleUrl}`;
+            metaData.logo = appleUrl.startsWith('http') ? appleUrl : `https://${sanitizedDomain}${appleUrl.startsWith('/') ? '' : '/'}${appleUrl}`;
           }
           const robotsMatch = html.match(/<meta[^>]*name=["']robots["'][^>]*content=["']([^"']+)["']/i);
           if (robotsMatch) metaData.robots = robotsMatch[1].trim();
@@ -370,12 +375,12 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           const rssFeedMatch = html.match(/<link[^>]*type=["']application\/rss\+xml["'][^>]*href=["']([^"']+)["']/i);
           if (rssFeedMatch) {
             const rssUrl = rssFeedMatch[1].trim();
-            metaData.rssFeed = rssUrl.startsWith('http') ? rssUrl : `https://${domain.trim()}${rssUrl.startsWith('/') ? '' : '/'}${rssUrl}`;
+            metaData.rssFeed = rssUrl.startsWith('http') ? rssUrl : `https://${sanitizedDomain}${rssUrl.startsWith('/') ? '' : '/'}${rssUrl}`;
           }
           const atomFeedMatch = html.match(/<link[^>]*type=["']application\/atom\+xml["'][^>]*href=["']([^"']+)["']/i);
           if (atomFeedMatch) {
             const atomUrl = atomFeedMatch[1].trim();
-            metaData.atomFeed = atomUrl.startsWith('http') ? atomUrl : `https://${domain.trim()}${atomUrl.startsWith('/') ? '' : '/'}${atomUrl}`;
+            metaData.atomFeed = atomUrl.startsWith('http') ? atomUrl : `https://${sanitizedDomain}${atomUrl.startsWith('/') ? '' : '/'}${atomUrl}`;
           }
           // JSON-LD
           const jsonLdMatches = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
@@ -407,7 +412,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           const errorMessage = metaError.name === 'AbortError'
             ? 'Request timed out while fetching metadata (try again or website may be slow)'
             : metaError.message || 'Failed to fetch metadata';
-          onMetascraperResults({ id: Date.now() + 1, domain: domain.trim(), timestamp: new Date().toLocaleString(), error: errorMessage });
+          onMetascraperResults({ id: Date.now() + 1, domain: sanitizedDomain, timestamp: new Date().toLocaleString(), error: errorMessage });
         }
       })();
       
@@ -417,7 +422,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
 
       toast({
         title: "Scan Complete",
-        description: `Successfully analyzed ${domain.trim()}`,
+        description: `Successfully analyzed ${sanitizedDomain}`,
       });
     } catch (error: any) {
       setIsScanning(false);
@@ -429,7 +434,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
       // Still try to fetch Metascraper even if VT fails
       void (async () => {
         try {
-          const targetUrl = `https://${domain.trim()}`;
+          const targetUrl = `https://${sanitizedDomain}`;
           const corsProxies = [
             `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`,
             `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
@@ -457,7 +462,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             throw lastError || new Error('All CORS proxies failed');
           }
           const html = await metascraperResponse.text();
-          const metaData: any = { id: Date.now() + 1, domain: domain.trim(), timestamp: new Date().toLocaleString() };
+          const metaData: any = { id: Date.now() + 1, domain: sanitizedDomain, timestamp: new Date().toLocaleString() };
           const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
           const ogTitleMatch = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
           const twitterTitleMatch = html.match(/<meta[^>]*name=["']twitter:title["'][^>]*content=["']([^"']+)["']/i);
@@ -509,12 +514,12 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           const faviconMatch = html.match(/<link[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["']/i);
           if (faviconMatch) {
             const faviconUrl = faviconMatch[1].trim();
-            metaData.favicon = faviconUrl.startsWith('http') ? faviconUrl : `https://${domain.trim()}${faviconUrl.startsWith('/') ? '' : '/'}${faviconUrl}`;
+            metaData.favicon = faviconUrl.startsWith('http') ? faviconUrl : `https://${sanitizedDomain}${faviconUrl.startsWith('/') ? '' : '/'}${faviconUrl}`;
           }
           const appleTouchMatch = html.match(/<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/i);
           if (appleTouchMatch) {
             const appleUrl = appleTouchMatch[1].trim();
-            metaData.logo = appleUrl.startsWith('http') ? appleUrl : `https://${domain.trim()}${appleUrl.startsWith('/') ? '' : '/'}${appleUrl}`;
+            metaData.logo = appleUrl.startsWith('http') ? appleUrl : `https://${sanitizedDomain}${appleUrl.startsWith('/') ? '' : '/'}${appleUrl}`;
           }
           const robotsMatch = html.match(/<meta[^>]*name=["']robots["'][^>]*content=["']([^"']+)["']/i);
           if (robotsMatch) metaData.robots = robotsMatch[1].trim();
@@ -529,12 +534,12 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           const rssFeedMatch = html.match(/<link[^>]*type=["']application\/rss\+xml["'][^>]*href=["']([^"']+)["']/i);
           if (rssFeedMatch) {
             const rssUrl = rssFeedMatch[1].trim();
-            metaData.rssFeed = rssUrl.startsWith('http') ? rssUrl : `https://${domain.trim()}${rssUrl.startsWith('/') ? '' : '/'}${rssUrl}`;
+            metaData.rssFeed = rssUrl.startsWith('http') ? rssUrl : `https://${sanitizedDomain}${rssUrl.startsWith('/') ? '' : '/'}${rssUrl}`;
           }
           const atomFeedMatch = html.match(/<link[^>]*type=["']application\/atom\+xml["'][^>]*href=["']([^"']+)["']/i);
           if (atomFeedMatch) {
             const atomUrl = atomFeedMatch[1].trim();
-            metaData.atomFeed = atomUrl.startsWith('http') ? atomUrl : `https://${domain.trim()}${atomUrl.startsWith('/') ? '' : '/'}${atomUrl}`;
+            metaData.atomFeed = atomUrl.startsWith('http') ? atomUrl : `https://${sanitizedDomain}${atomUrl.startsWith('/') ? '' : '/'}${atomUrl}`;
           }
           const jsonLdMatches = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
           if (jsonLdMatches) {
@@ -565,7 +570,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           const errorMessage = metaError.name === 'AbortError'
             ? 'Request timed out while fetching metadata (try again or website may be slow)'
             : metaError.message || 'Failed to fetch metadata';
-          onMetascraperResults({ id: Date.now() + 1, domain: domain.trim(), timestamp: new Date().toLocaleString(), error: errorMessage });
+          onMetascraperResults({ id: Date.now() + 1, domain: sanitizedDomain, timestamp: new Date().toLocaleString(), error: errorMessage });
         }
       })();
     }
