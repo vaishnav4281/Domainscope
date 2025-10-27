@@ -9,11 +9,15 @@ export default defineConfig(({ mode }) => {
   const cwd = process.cwd();
   const env = loadEnv(mode, cwd, "");
   const vtKey = env.VITE_VIRUSTOTAL_API_KEY || process.env.VITE_VIRUSTOTAL_API_KEY;
-  const ipqsKey = env.VITE_IPQS_API_KEY || process.env.VITE_IPQS_API_KEY;
-  const ipqsKey2 = env.VITE_IPQS_API_KEY_2 || process.env.VITE_IPQS_API_KEY_2;
+  const ipqsKeys = [
+    env.VITE_IPQS_API_KEY || process.env.VITE_IPQS_API_KEY,
+    env.VITE_IPQS_API_KEY_2 || process.env.VITE_IPQS_API_KEY_2,
+    env.VITE_IPQS_API_KEY_3 || process.env.VITE_IPQS_API_KEY_3,
+    env.VITE_IPQS_API_KEY_4 || process.env.VITE_IPQS_API_KEY_4,
+    env.VITE_IPQS_API_KEY_5 || process.env.VITE_IPQS_API_KEY_5,
+  ].filter(Boolean);
   const abuseKey = env.VITE_ABUSEIPDB_API_KEY || process.env.VITE_ABUSEIPDB_API_KEY;
   const hasVtKey = Boolean(vtKey);
-  const ipqsKeys = [ipqsKey, ipqsKey2].filter(Boolean);
   // Diagnostics (no secrets):
   console.log("[vite] mode=", mode, "cwd=", cwd);
   console.log("[vite] .env exists:", fs.existsSync(path.join(cwd, ".env")));
@@ -50,7 +54,7 @@ export default defineConfig(({ mode }) => {
             });
           },
         },
-        // Dev proxy for IPQS with automatic key rotation
+        // Dev proxy for IPQS with optimized automatic key rotation
         '/api/ipqs': {
           target: 'https://ipqualityscore.com',
           changeOrigin: true,
@@ -61,33 +65,57 @@ export default defineConfig(({ mode }) => {
               console.log(`[vite] IPQS proxy configured with ${ipqsKeys.length} key(s)`);
             }
             
-            // Track which key index to use (rotates on quota failures)
-            // Start with 0, but will auto-rotate if quota exceeded
+            // Track key status: null = untested, true = working, false = exhausted
+            const keyStatus: (boolean | null)[] = ipqsKeys.map(() => null);
             let currentKeyIndex = 0;
             let keyTestComplete = false;
             
-            // Quick check: test key 1, if exhausted start with key 2
-            if (ipqsKeys.length > 1) {
-              console.log('[vite] Testing IPQS key #1...');
-              fetch(`https://ipqualityscore.com/api/json/ip/${ipqsKeys[0]}/8.8.8.8`)
-                .then(r => r.json())
-                .then((data: any) => {
-                  if (data.success === false && data.message?.includes('exceeded')) {
-                    currentKeyIndex = 1;
-                    console.warn('[vite] ⚠️ Key #1 quota exceeded, starting with key #2');
-                  } else {
-                    console.log('[vite] ✅ Key #1 is working, using it first');
-                  }
-                  keyTestComplete = true;
-                })
-                .catch(() => {
-                  console.warn('[vite] ⚠️ Could not test key #1, will use key #2 as fallback');
-                  currentKeyIndex = 1;
-                  keyTestComplete = true;
-                });
+            // OPTIMIZED: Test ALL keys in parallel at startup
+            if (ipqsKeys.length > 0) {
+              console.log('[vite] 🔍 Testing all IPQS keys in parallel...');
+              const testPromises = ipqsKeys.map((key, index) => 
+                fetch(`https://ipqualityscore.com/api/json/ip/${key}/8.8.8.8`)
+                  .then(r => r.json())
+                  .then((data: any) => {
+                    if (data.success === false && data.message?.includes('exceeded')) {
+                      keyStatus[index] = false;
+                      console.log(`[vite] ❌ Key #${index + 1} quota exceeded`);
+                      return false;
+                    } else {
+                      keyStatus[index] = true;
+                      console.log(`[vite] ✅ Key #${index + 1} is working`);
+                      return true;
+                    }
+                  })
+                  .catch(() => {
+                    keyStatus[index] = true; // Assume working if network error
+                    console.warn(`[vite] ⚠️ Could not test key #${index + 1}, assuming it works`);
+                    return true;
+                  })
+              );
+              
+              Promise.all(testPromises).then((results) => {
+                // Find first working key
+                const firstWorkingKey = results.findIndex(r => r);
+                if (firstWorkingKey !== -1) {
+                  currentKeyIndex = firstWorkingKey;
+                  console.log(`[vite] 🎯 Starting with key #${currentKeyIndex + 1}`);
+                } else {
+                  console.warn('[vite] ⚠️ All keys appear exhausted, will try anyway');
+                }
+                keyTestComplete = true;
+              });
             } else {
               keyTestComplete = true;
             }
+            
+            // Helper to find next working key instantly
+            const findNextWorkingKey = () => {
+              for (let i = currentKeyIndex + 1; i < ipqsKeys.length; i++) {
+                if (keyStatus[i] !== false) return i;
+              }
+              return currentKeyIndex; // No better key found
+            };
             
             proxy.on('proxyReq', async (proxyReq, req, res) => {
               const ip = new URL(`http://localhost${req.url}`).searchParams.get('ip');
@@ -97,9 +125,9 @@ export default defineConfig(({ mode }) => {
                 return;
               }
               
-              // Wait for key test to complete (max 3 seconds)
+              // Wait for key test to complete (max 2 seconds)
               let waited = 0;
-              while (!keyTestComplete && waited < 30) {
+              while (!keyTestComplete && waited < 20) {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 waited++;
               }
@@ -121,10 +149,18 @@ export default defineConfig(({ mode }) => {
               proxyRes.on('end', () => {
                 const body = Buffer.concat(chunks).toString('utf8');
                 
-                // Check if quota exceeded and we have a backup key
-                if (body.includes('exceeded your request quota') && currentKeyIndex < ipqsKeys.length - 1) {
-                  currentKeyIndex++;
-                  console.warn(`[vite] IPQS key #${currentKeyIndex} quota exceeded, rotating to key #${currentKeyIndex + 1}`);
+                // Check if quota exceeded
+                if (body.includes('exceeded your request quota')) {
+                  keyStatus[currentKeyIndex] = false; // Mark as exhausted
+                  
+                  // OPTIMIZED: Immediately find next working key
+                  const nextKey = findNextWorkingKey();
+                  if (nextKey !== currentKeyIndex) {
+                    console.warn(`[vite] ⚡ Key #${currentKeyIndex + 1} exhausted, instantly switching to key #${nextKey + 1}`);
+                    currentKeyIndex = nextKey;
+                  } else {
+                    console.error(`[vite] ❌ All IPQS keys exhausted`);
+                  }
                 }
               });
             });
@@ -157,10 +193,11 @@ export default defineConfig(({ mode }) => {
           },
         },
         // Dev proxy for DNSBL - forwards to local Node server (run: npm run dev:dnsbl)
-        '/api/dnsbl': {
-          target: 'http://localhost:3001',
-          changeOrigin: true,
-        },
+        // OPTIONAL: Comment out if not running DNSBL server to avoid errors
+        // '/api/dnsbl': {
+        //   target: 'http://localhost:3001',
+        //   changeOrigin: true,
+        // },
         // Dev proxy for free ip-api.com fallback (no API key needed)
         '/api/ip-api': {
           target: 'http://ip-api.com',

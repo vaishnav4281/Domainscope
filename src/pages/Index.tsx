@@ -222,14 +222,14 @@ const Index = () => {
               }, [virusTotalResults])}
             />
 
-            {/* Metascraper Results */}
-            <MetascraperResults results={metascraperResults} />
-
-            {/* VirusTotal Results */}
+            {/* VirusTotal Results - Moved to second position */}
             <VirusTotalResults results={virusTotalResults} />
 
             {/* Security Intelligence: IPQS + AbuseIPDB + DNSBL */}
             <SecurityIntelPanel results={results as any} />
+
+            {/* Metascraper Results - Moved to last position */}
+            <MetascraperResults results={metascraperResults} />
           </div>
         </div>
       </main>

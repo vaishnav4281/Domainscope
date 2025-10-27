@@ -18,7 +18,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
   const [isScanning, setIsScanning] = useState(false);
   const { toast } = useToast();
 
-  const fetchWithTimeout = async (url: string, timeout = 15000) => {
+  const fetchWithTimeout = async (url: string, timeout = 8000) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
     try {
@@ -280,7 +280,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           let lastError: any = null;
           for (const proxyUrl of corsProxies) {
             try {
-              metascraperResponse = await fetchWithTimeout(proxyUrl, 8000);
+              metascraperResponse = await fetchWithTimeout(proxyUrl, 3000);
               if (metascraperResponse.ok) break;
             } catch (err) {
               lastError = err;
@@ -432,7 +432,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           let lastError: any = null;
           for (const proxyUrl of corsProxies) {
             try {
-              metascraperResponse = await fetchWithTimeout(proxyUrl, 8000);
+              metascraperResponse = await fetchWithTimeout(proxyUrl, 3000);
               if (metascraperResponse.ok) break;
             } catch (err) {
               lastError = err;
