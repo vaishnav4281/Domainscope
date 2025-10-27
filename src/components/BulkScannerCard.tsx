@@ -170,7 +170,13 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults 
             for (const proxyUrl of corsProxies) {
               try {
                 metascraperResponse = await fetchWithTimeout(proxyUrl, 3000);
-                if (metascraperResponse.ok) break;
+                if (metascraperResponse.ok) {
+                  console.log(`✅ Bulk scan: Successfully fetched metadata for ${domain} via ${proxyUrl.split('?')[0]}`);
+                  break;
+                } else {
+                  // Non-OK response (403, 404, etc.) - try next proxy
+                  continue;
+                }
               } catch { continue; }
             }
             

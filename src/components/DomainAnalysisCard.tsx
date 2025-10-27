@@ -281,7 +281,14 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           for (const proxyUrl of corsProxies) {
             try {
               metascraperResponse = await fetchWithTimeout(proxyUrl, 3000);
-              if (metascraperResponse.ok) break;
+              if (metascraperResponse.ok) {
+                console.log(`✅ Successfully fetched metadata via proxy: ${proxyUrl.split('?')[0]}`);
+                break;
+              } else {
+                // Non-OK response (403, 404, etc.) - try next proxy
+                lastError = new Error(`HTTP ${metascraperResponse.status}`);
+                continue;
+              }
             } catch (err) {
               lastError = err;
               continue;
@@ -433,7 +440,14 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
           for (const proxyUrl of corsProxies) {
             try {
               metascraperResponse = await fetchWithTimeout(proxyUrl, 3000);
-              if (metascraperResponse.ok) break;
+              if (metascraperResponse.ok) {
+                console.log(`✅ Successfully fetched metadata via proxy: ${proxyUrl.split('?')[0]}`);
+                break;
+              } else {
+                // Non-OK response (403, 404, etc.) - try next proxy
+                lastError = new Error(`HTTP ${metascraperResponse.status}`);
+                continue;
+              }
             } catch (err) {
               lastError = err;
               continue;
