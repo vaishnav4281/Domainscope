@@ -45,7 +45,11 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
     // Sanitize domain: remove protocol and trailing slashes
     const sanitizedDomain = domain.trim()
       .replace(/^https?:\/\//, '')  // Remove http:// or https://
-      .replace(/\/+$/, '');          // Remove trailing slashes
+      .replace(/\/+$/, '')          // Remove trailing slashes
+      .replace(/^www\./, '')
+      .split(/[\s\/?#]/)[0]
+      .split(':')[0]
+      .replace(/\.+$/, '');
 
     setIsScanning(true);
     

@@ -7,6 +7,17 @@ import { Database, Upload, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { fetchThroughCorsProxy } from "@/lib/cors-proxy";
 
+const cleanDomain = (raw: string): string => {
+  if (!raw) return "";
+  return raw
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .split(/[\s\/?#]/)[0]
+    .split(":")[0]
+    .replace(/\.+$/, "");
+};
+
 interface BulkScannerCardProps {
   onResults: (result: any) => void;
   onMetascraperResults?: (result: any) => void;
@@ -36,8 +47,10 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults 
   const BATCH_SIZE = 15; // Process 15 domains concurrently (optimized for speed)
 
   // Optimized single domain scan with parallel API calls
-  const scanSingleDomain = async (domain: string, index: number) => {
+  const scanSingleDomain = async (rawDomain: string, index: number) => {
     try {
+      const domain = cleanDomain(rawDomain) || rawDomain.trim();
+
       // OPTIMIZED: All API calls in parallel with shorter timeouts
       const [vtDataResult, whoisResult] = await Promise.allSettled([
         // VirusTotal
@@ -226,7 +239,7 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults 
       ]);
     } catch (error: any) {
       toast({
-        title: `Scan failed for ${domain}`,
+        title: `Scan failed for ${rawDomain}`,
         description: error.message || "Unknown error",
         variant: "destructive",
       });
