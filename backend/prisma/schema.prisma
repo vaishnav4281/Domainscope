@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int                  @id @default(autoincrement())
+  email              String               @unique
+  password           String
+  emailVerified      Boolean              @default(false) @map("email_verified")
+  verificationToken  String?              @map("verification_token")
+  createdAt          DateTime             @default(now())
+  scans              ScanHistory[]
+  history            UserHistory[]
+  apiKeys            ApiKey[]
+  webhooks           Webhook[]
+  emailVerifications EmailVerification[]
+}
+
+model ApiKey {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+  isActive  Boolean  @default(true)
+  lastUsed  DateTime?
+}
+
+model ScanHistory {
+  id        Int      @id @default(autoincrement())
+  target    String
+  result    Json
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  target    String
+  type      String   @default("single") // single, bulk
+  status    String   @default("completed")
+  results   Json?    // Store full scan results
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Webhook {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  url         String
+  events      String[] // ["scan.completed", "scan.failed"]
+  secret      String   // For HMAC signature
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastTriggered DateTime?
+  failureCount Int     @default(0)
+}
+
+model EmailVerification {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+  otp       String
+  type      String   // 'signup' or 'password_reset'
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([otp])
+  @@index([expiresAt])
+}

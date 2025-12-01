@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: domainscope-backend
+    env: node
+    plan: free
+    buildCommand: cd backend && NPM_CONFIG_PRODUCTION=false npm install && npx prisma generate && npm run build
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://domainscope.vercel.app
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 500
+      - key: AUTH_RATE_LIMIT_WINDOW_MS
+        value: 3600000
+      - key: AUTH_RATE_LIMIT_MAX
+        value: 10
+      # IMPORTANT: Add these MANUALLY in Render Dashboard (not in YAML for security):
+      # - DATABASE_URL (your Neon PostgreSQL connection string)
+      # - REDIS_URL (your Redis Cloud connection string)
+      # - VT_API_KEY (VirusTotal)
+      # - IPQS_API_KEY (IPQualityScore)
+      # - ABUSEIPDB_API_KEY (AbuseIPDB)
+      # - SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS (for emails)
