@@ -7,151 +7,201 @@ export default function ThreeBackground() {
     useEffect(() => {
         if (!containerRef.current) return;
 
-        // Detect mobile for performance optimization
+        // Detect mobile and theme
         const isMobile = window.innerWidth < 768;
         const isDark = document.documentElement.classList.contains('dark');
 
-        // Scene setup with optimized settings
+        // Scene setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(
-            75,
+            60,
             window.innerWidth / window.innerHeight,
             0.1,
-            1000
+            100
         );
-        camera.position.z = 15;
+        camera.position.set(0, 8, 12);
+        camera.lookAt(0, 0, 0);
 
         const renderer = new THREE.WebGLRenderer({
             alpha: true,
-            antialias: !isMobile, // Disable on mobile for performance
+            antialias: !isMobile,
             powerPreference: "low-power"
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5));
         containerRef.current.appendChild(renderer.domElement);
 
-        // Reduce particle count on mobile
-        const particleCount = isMobile ? 80 : 150;
-        const lineCount = isMobile ? 8 : 15;
+        // Create infinite grid with brand colors
+        const gridSize = 40;
+        const gridDivisions = isMobile ? 20 : 30;
 
-        // Create optimized particle geometry (shared for performance)
-        const particleGeometry = new THREE.SphereGeometry(0.05, 6, 6);
+        // Main grid
+        const gridHelper = new THREE.GridHelper(
+            gridSize,
+            gridDivisions,
+            isDark ? 0x3b82f6 : 0xef4444, // Blue in dark, Red in light
+            isDark ? 0x1e293b : 0xe2e8f0  // Slate colors
+        );
+        gridHelper.material.opacity = isDark ? 0.15 : 0.1;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
 
-        // Create particles with brand colors
-        const particles: THREE.Mesh[] = [];
-        const particleSpeeds: number[] = [];
+        // Create animated gradient plane below grid
+        const planeGeometry = new THREE.PlaneGeometry(gridSize * 2, gridSize * 2, 32, 32);
 
-        for (let i = 0; i < particleCount; i++) {
-            let color;
-            const rand = Math.random();
+        // Create gradient shader material
+        const planeMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                time: { value: 0 },
+                color1: { value: new THREE.Color(isDark ? 0x1e1b4b : 0xfef2f2) }, // Deep blue/light red
+                color2: { value: new THREE.Color(isDark ? 0x450a0a : 0xeff6ff) }, // Deep red/light blue
+                opacity: { value: isDark ? 0.4 : 0.3 }
+            },
+            vertexShader: `
+                varying vec2 vUv;
+                uniform float time;
+                
+                void main() {
+                    vUv = uv;
+                    vec3 pos = position;
+                    
+                    // Subtle wave effect
+                    float wave = sin(pos.x * 0.3 + time * 0.5) * cos(pos.y * 0.3 + time * 0.3);
+                    pos.z = wave * 0.5;
+                    
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 color1;
+                uniform vec3 color2;
+                uniform float opacity;
+                varying vec2 vUv;
+                
+                void main() {
+                    // Diagonal gradient
+                    float gradient = (vUv.x + vUv.y) * 0.5;
+                    vec3 color = mix(color1, color2, gradient);
+                    gl_FragColor = vec4(color, opacity);
+                }
+            `,
+            transparent: true,
+            side: THREE.DoubleSide
+        });
 
-            // Brand color palette: Red-Purple-Blue gradient
-            if (rand > 0.75) {
-                color = new THREE.Color(0xef4444); // Red
-            } else if (rand > 0.5) {
-                color = new THREE.Color(0xa855f7); // Purple
-            } else if (rand > 0.25) {
-                color = new THREE.Color(0x3b82f6); // Blue
+        const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -Math.PI / 2;
+        plane.position.y = -0.05;
+        scene.add(plane);
+
+        // Add subtle accent dots on grid intersections (fewer on mobile)
+        const dotCount = isMobile ? 15 : 25;
+        const dots: THREE.Mesh[] = [];
+        const dotGeometry = new THREE.SphereGeometry(0.08, 8, 8);
+
+        for (let i = 0; i < dotCount; i++) {
+            const colorChoice = Math.random();
+            let dotColor;
+
+            if (colorChoice > 0.66) {
+                dotColor = new THREE.Color(0xef4444); // Red
+            } else if (colorChoice > 0.33) {
+                dotColor = new THREE.Color(0x8b5cf6); // Purple
             } else {
-                color = new THREE.Color(isDark ? 0x94a3b8 : 0x64748b); // Slate
+                dotColor = new THREE.Color(0x3b82f6); // Blue
             }
 
             const material = new THREE.MeshBasicMaterial({
-                color: color,
+                color: dotColor,
                 transparent: true,
-                opacity: isDark ? 0.6 : 0.5,
+                opacity: 0.6
             });
 
-            const particle = new THREE.Mesh(particleGeometry, material);
+            const dot = new THREE.Mesh(dotGeometry, material);
 
-            // Spread particles across depth for 3D effect
-            particle.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 20
+            // Place on grid intersections
+            const gridStep = gridSize / gridDivisions;
+            dot.position.set(
+                (Math.floor(Math.random() * gridDivisions) - gridDivisions / 2) * gridStep,
+                0.1,
+                (Math.floor(Math.random() * gridDivisions) - gridDivisions / 2) * gridStep
             );
 
-            particles.push(particle);
-            particleSpeeds.push(Math.random() * 0.3 + 0.1); // Random speeds for variety
-            scene.add(particle);
+            dots.push(dot);
+            scene.add(dot);
         }
 
-        // Create flowing connection lines
-        const lines: THREE.Line[] = [];
-        const lineOpacities: number[] = [];
+        // Floating particles (very subtle, minimal)
+        const particleCount = isMobile ? 20 : 40;
+        const particleGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities: number[] = [];
 
-        for (let i = 0; i < lineCount; i++) {
-            const p1 = particles[Math.floor(Math.random() * particles.length)];
-            const p2 = particles[Math.floor(Math.random() * particles.length)];
-
-            if (p1 !== p2) {
-                const points = [p1.position.clone(), p2.position.clone()];
-                const geometry = new THREE.BufferGeometry().setFromPoints(points);
-
-                // Gradient line colors
-                const lineColor = Math.random() > 0.5
-                    ? new THREE.Color(0x3b82f6) // Blue
-                    : new THREE.Color(0xef4444); // Red
-
-                const material = new THREE.LineBasicMaterial({
-                    color: lineColor,
-                    transparent: true,
-                    opacity: 0.2,
-                    linewidth: 1
-                });
-
-                const line = new THREE.Line(geometry, material);
-                lines.push(line);
-                lineOpacities.push(Math.random()); // Store initial phase
-                scene.add(line);
-            }
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * gridSize;
+            positions[i * 3 + 1] = Math.random() * 10;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * gridSize;
+            velocities.push(Math.random() * 0.02 + 0.01);
         }
 
-        // Mouse/touch interaction
-        let targetRotationX = 0;
-        let targetRotationY = 0;
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-        const handlePointerMove = (event: MouseEvent | TouchEvent) => {
-            const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-            const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+        const particleMaterial = new THREE.PointsMaterial({
+            color: isDark ? 0x60a5fa : 0xf87171,
+            size: 0.1,
+            transparent: true,
+            opacity: 0.4,
+            sizeAttenuation: true
+        });
 
-            targetRotationX = (clientX / window.innerWidth - 0.5) * 0.3;
-            targetRotationY = (clientY / window.innerHeight - 0.5) * 0.3;
-        };
+        const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particleSystem);
 
-        if (!isMobile) {
-            window.addEventListener('mousemove', handlePointerMove as EventListener);
-        }
-        window.addEventListener('touchmove', handlePointerMove as EventListener, { passive: true });
+        // Ambient light for subtle illumination
+        const ambientLight = new THREE.AmbientLight(
+            isDark ? 0x3b82f6 : 0xef4444,
+            0.2
+        );
+        scene.add(ambientLight);
 
-        // Optimized animation loop
+        // Animation
         let animationId: number;
         const clock = new THREE.Clock();
 
         const animate = () => {
             const elapsedTime = clock.getElapsedTime();
 
-            // Gentle floating animation for particles
-            particles.forEach((particle, i) => {
-                const speed = particleSpeeds[i];
-                particle.position.y += Math.sin(elapsedTime * speed + i) * 0.005;
-                particle.position.x += Math.cos(elapsedTime * speed * 0.5 + i) * 0.003;
+            // Update shader time for wave effect
+            planeMaterial.uniforms.time.value = elapsedTime;
 
-                // Gentle rotation
-                particle.rotation.y += 0.002;
-                particle.rotation.x += 0.001;
+            // Rotate grid very slowly for depth effect
+            gridHelper.rotation.y = elapsedTime * 0.05;
+
+            // Pulse dots gently
+            dots.forEach((dot, i) => {
+                const material = dot.material as THREE.MeshBasicMaterial;
+                material.opacity = 0.4 + Math.sin(elapsedTime * 2 + i) * 0.2;
+
+                // Gentle bounce
+                dot.position.y = 0.1 + Math.sin(elapsedTime * 1.5 + i) * 0.1;
             });
 
-            // Smooth pulsing for connection lines
-            lines.forEach((line, i) => {
-                const material = line.material as THREE.LineBasicMaterial;
-                const phase = lineOpacities[i];
-                material.opacity = (Math.sin(elapsedTime * 1.2 + phase * Math.PI * 2) * 0.15) + 0.2;
-            });
+            // Animate particles (floating upward)
+            const positions = particleGeometry.attributes.position.array as Float32Array;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3 + 1] += velocities[i];
 
-            // Smooth camera rotation based on input
-            camera.rotation.y += (targetRotationX - camera.rotation.y) * 0.05;
-            camera.rotation.x += (targetRotationY - camera.rotation.x) * 0.05;
+                // Reset when too high
+                if (positions[i * 3 + 1] > 15) {
+                    positions[i * 3 + 1] = 0;
+                }
+            }
+            particleGeometry.attributes.position.needsUpdate = true;
+
+            // Very subtle camera sway
+            camera.position.x = Math.sin(elapsedTime * 0.2) * 0.5;
+            camera.position.y = 8 + Math.cos(elapsedTime * 0.15) * 0.3;
+            camera.lookAt(0, 0, 0);
 
             renderer.render(scene, camera);
             animationId = requestAnimationFrame(animate);
@@ -172,13 +222,23 @@ export default function ThreeBackground() {
 
         window.addEventListener('resize', handleResize);
 
-        // Theme change listener
+        // Theme change observer
         const themeObserver = new MutationObserver(() => {
             const newIsDark = document.documentElement.classList.contains('dark');
-            particles.forEach((particle, i) => {
-                const material = particle.material as THREE.MeshBasicMaterial;
-                material.opacity = newIsDark ? 0.6 : 0.5;
-            });
+
+            // Update grid colors
+            gridHelper.material.color.setHex(newIsDark ? 0x3b82f6 : 0xef4444);
+
+            // Update plane gradient
+            planeMaterial.uniforms.color1.value.setHex(newIsDark ? 0x1e1b4b : 0xfef2f2);
+            planeMaterial.uniforms.color2.value.setHex(newIsDark ? 0x450a0a : 0xeff6ff);
+            planeMaterial.uniforms.opacity.value = newIsDark ? 0.4 : 0.3;
+
+            // Update particles
+            particleMaterial.color.setHex(newIsDark ? 0x60a5fa : 0xf87171);
+
+            // Update ambient light
+            ambientLight.color.setHex(newIsDark ? 0x3b82f6 : 0xef4444);
         });
 
         themeObserver.observe(document.documentElement, {
@@ -188,28 +248,26 @@ export default function ThreeBackground() {
 
         // Cleanup
         return () => {
-            window.removeEventListener('mousemove', handlePointerMove as EventListener);
-            window.removeEventListener('touchmove', handlePointerMove as EventListener);
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationId);
             clearTimeout(resizeTimeout);
             themeObserver.disconnect();
 
-            // Proper cleanup
             if (containerRef.current?.contains(renderer.domElement)) {
                 containerRef.current.removeChild(renderer.domElement);
             }
 
-            // Dispose shared geometry once
+            // Dispose geometries
+            gridHelper.geometry.dispose();
+            (gridHelper.material as THREE.Material).dispose();
+            planeGeometry.dispose();
+            planeMaterial.dispose();
+            dotGeometry.dispose();
             particleGeometry.dispose();
+            particleMaterial.dispose();
 
-            particles.forEach(particle => {
-                (particle.material as THREE.Material).dispose();
-            });
-
-            lines.forEach(line => {
-                line.geometry.dispose();
-                (line.material as THREE.Material).dispose();
+            dots.forEach(dot => {
+                (dot.material as THREE.Material).dispose();
             });
 
             renderer.dispose();
