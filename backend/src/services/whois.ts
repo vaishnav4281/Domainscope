@@ -2,6 +2,7 @@ import { promises as dns } from 'dns';
 import whois from 'whois-json';
 
 import { redis } from '../redis.js';
+import { waitForWhoisSlot, recordWhoisQuery, getWhoisRateLimitStatus } from './whois-queue.js';
 
 // Simple in-memory cache (will be replaced by Redis later)
 const CACHE_TTL = 24 * 60 * 60; // 24 hours in seconds
@@ -48,8 +49,18 @@ function normalizeDate(dateStr: string | undefined | null): string {
 
 async function queryWhoisServer(domain: string, server: string | null = null) {
     try {
+        // Wait for a WHOIS query slot to become available (max 5 seconds)
+        const canQuery = await waitForWhoisSlot(5000);
+        if (!canQuery) {
+            console.warn(`⏱️ WHOIS rate limit queue full for ${domain}. Skipping query to ${server || 'default'}.`);
+            return null;
+        }
+
         const options = server ? { server } : {};
         const result = await whois(domain, { ...options, timeout: 10000 });
+
+        // Record this query for rate limiting
+        await recordWhoisQuery();
 
         if (result && (result.registrar || result.creationDate || result.registrant)) {
             return {

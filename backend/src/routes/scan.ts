@@ -2,6 +2,7 @@ import express from 'express';
 import dns from 'node:dns/promises';
 import { checkDnsbl } from '../services/dnsbl.js';
 import { getWhois } from '../services/whois.js';
+import { getWhoisRateLimitStatus } from '../services/whois-queue.js';
 import { checkVirusTotal } from '../services/vt.js';
 import { checkIPQS } from '../services/ipqs.js';
 import { checkAbuseIPDB } from '../services/abuseipdb.js';
@@ -47,6 +48,12 @@ router.get('/whois', async (req, res) => {
     const result = await getWhois(domain, force === 'true');
     if (!result) return res.status(404).json({ error: 'WHOIS not found' });
     res.json(result);
+});
+
+// WHOIS rate limit status (for monitoring and debugging)
+router.get('/whois-status', async (req, res) => {
+    const status = await getWhoisRateLimitStatus();
+    res.json(status);
 });
 
 router.get('/vt', async (req, res) => {
