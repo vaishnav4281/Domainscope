@@ -312,18 +312,18 @@ const LandingPage = () => {
                             </div>
                         </div>
 
-                        {/* Feature 8 - Mobile Optimized */}
+                        {/* Feature 8 - SSL/TLS Insights */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Smartphone className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                                <Lock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Mobile Optimized</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">SSL/TLS Insights</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Enhanced timeouts, retry logic, and progressive loading for reliable performance on mobile networks.
+                                Analyze SSL certificates, expiration dates, and JARM fingerprints to identify security gaps and misconfigurations.
                             </p>
                             <div className="flex items-center text-sm text-amber-600 dark:text-amber-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Auto-retry enabled</span>
+                                <span>Certificate analysis</span>
                             </div>
                         </div>
 
