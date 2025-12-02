@@ -390,27 +390,38 @@ const LandingPage = () => {
             </div>
 
             {/* CTA Section */}
-            <div className="relative py-24">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-6">
-                        Start Your Security Journey Today
-                    </h2>
-                    <p className="text-lg text-slate-600 dark:text-slate-300 mb-10">
-                        Join security professionals worldwide. Get instant access to powerful domain analysis tools and protect your digital infrastructure.
-                    </p>
-                    {isAuthenticated ? (
-                        <Link to="/dashboard">
-                            <Button size="lg" className="h-14 px-10 text-lg bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-                                Go to Dashboard <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
-                    ) : (
-                        <Link to="/signup">
-                            <Button size="lg" className="h-14 px-10 text-lg bg-gradient-to-r from-red-600 to-blue-600 hover:from-red-700 hover:to-blue-700 text-white border-0 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
-                                Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
-                    )}
+            <div className="relative py-24 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-5xl mx-auto">
+                    <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-emerald-600 to-cyan-600 shadow-2xl ring-1 ring-white/20">
+                        {/* Decorative background elements */}
+                        <div className="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-black/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div className="relative z-10 p-10 sm:p-16 text-center">
+                            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+                                Start Your Security Journey Today
+                            </h2>
+                            <p className="text-lg text-emerald-50 mb-10 max-w-2xl mx-auto leading-relaxed">
+                                Join security professionals worldwide. Get instant access to powerful domain analysis tools and protect your digital infrastructure.
+                            </p>
+
+                            <div className="flex justify-center gap-4">
+                                {isAuthenticated ? (
+                                    <Link to="/dashboard">
+                                        <Button size="lg" className="h-14 px-10 text-lg bg-white text-emerald-600 hover:bg-emerald-50 border-0 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 font-semibold">
+                                            Go to Dashboard <ArrowRight className="ml-2 h-5 w-5" />
+                                        </Button>
+                                    </Link>
+                                ) : (
+                                    <Link to="/signup">
+                                        <Button size="lg" className="h-14 px-10 text-lg bg-white text-emerald-600 hover:bg-emerald-50 border-0 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 font-semibold">
+                                            Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
+                                        </Button>
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
