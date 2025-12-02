@@ -6,7 +6,7 @@ const CRTSH_API_URL = 'https://crt.sh';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function checkCrtSh(domain: string) {
-    const cacheKey = `crtsh:${domain}`;
+    const cacheKey = `crtsh_v2:${domain}`;
 
     // Check cache first
     try {
@@ -86,11 +86,13 @@ export async function checkCrtSh(domain: string) {
                 timestamp: new Date().toISOString()
             };
 
-            // Cache for 24 hours (86400 seconds)
-            try {
-                await redis.setex(cacheKey, 86400, JSON.stringify(result));
-            } catch (err) {
-                console.warn('[CrtSh] Failed to cache result:', err);
+            // Cache for 24 hours (86400 seconds) - ONLY IF RESULTS FOUND
+            if (result.count > 0) {
+                try {
+                    await redis.setex(cacheKey, 86400, JSON.stringify(result));
+                } catch (err) {
+                    console.warn('[CrtSh] Failed to cache result:', err);
+                }
             }
 
             return result;
