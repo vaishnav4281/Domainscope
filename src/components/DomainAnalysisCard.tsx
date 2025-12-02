@@ -515,7 +515,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             attempt++;
             console.log(`[Subdomain] Attempt ${attempt}/${maxRetries + 1}...`);
 
-            // Increased timeout to 60s for mobile networks and slow crt.sh responses
+            // Increased timeout to 90s for mobile networks and slow crt.sh responses
             const subRes = await fetchWithTimeout(
               `${API_BASE_URL}/api/v1/scan/subdomain?domain=${encodeURIComponent(sanitizedDomain)}`,
               90000 // Increased to 90s
@@ -523,14 +523,25 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
 
             if (subRes.ok) {
               const subData = await subRes.json();
+              console.log('[Subdomain] Success:', subData);
               onSubdomainResults(subData);
+              toast({
+                title: "Subdomain Scan Complete",
+                description: `Found ${subData.count || 0} subdomains.`,
+              });
               return; // Success, exit retry loop
             } else {
               console.warn(`[Subdomain] Attempt ${attempt} failed with status ${subRes.status}`);
 
               // If this was the last attempt, show error
               if (attempt > maxRetries) {
+                console.error('[Subdomain] All attempts failed.');
                 onSubdomainResults({ error: 'Failed to fetch subdomains (API unavailable or timed out)' });
+                toast({
+                  title: "Subdomain Scan Failed",
+                  description: "Could not fetch subdomains. Please try again.",
+                  variant: "destructive",
+                });
               }
             }
           } catch (e: any) {
@@ -541,7 +552,13 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
               const errorMessage = e.name === 'AbortError'
                 ? 'Subdomain scan timed out (slow network or crt.sh unavailable)'
                 : 'Subdomain scan failed (Network Error)';
+              console.error('[Subdomain] Final Error:', errorMessage);
               onSubdomainResults({ error: errorMessage });
+              toast({
+                title: "Subdomain Scan Failed",
+                description: errorMessage,
+                variant: "destructive",
+              });
             } else {
               // Wait before retrying (exponential backoff: 2s, 4s)
               await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
