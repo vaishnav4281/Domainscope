@@ -27,8 +27,8 @@ export async function checkCrtSh(domain: string) {
             console.log(`[CrtSh] Fetching subdomains for ${domain} (Attempt ${attempt + 1}/${maxRetries + 1})...`);
 
             const controller = new AbortController();
-            // Increased timeout to 45s for mobile/slow connections
-            const timeoutId = setTimeout(() => controller.abort(), 45000);
+            // Increased timeout to 60s for mobile networks and slow crt.sh responses
+            const timeoutId = setTimeout(() => controller.abort(), 60000);
 
             const response = await fetch(`${CRTSH_API_URL}/?q=%.${domain}&output=json`, {
                 headers: {

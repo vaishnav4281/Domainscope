@@ -517,7 +517,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             // Increased timeout to 60s for mobile networks and slow crt.sh responses
             const subRes = await fetchWithTimeout(
               `${API_BASE_URL}/api/v1/scan/subdomain?domain=${encodeURIComponent(sanitizedDomain)}`,
-              60000 // Increased to 60s
+              90000 // Increased to 90s
             );
 
             if (subRes.ok) {

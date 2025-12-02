@@ -11,10 +11,10 @@ export interface CorsProxyConfig {
 // Expanded list of reliable CORS proxies
 const CORS_PROXIES = [
   (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
   (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-  (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
   (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`,
+  (url: string) => `https://cors-anywhere.herokuapp.com/${url}`,
+  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
 ];
 
 /**
@@ -23,7 +23,7 @@ const CORS_PROXIES = [
 async function fetchWithTimeout(url: string, timeout: number): Promise<Response> {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
-  
+
   try {
     const response = await fetch(url, { signal: controller.signal });
     clearTimeout(id);
@@ -43,17 +43,17 @@ export async function fetchThroughCorsProxy(
   config: CorsProxyConfig = {}
 ): Promise<Response> {
   const { timeout = 5000, parallelAttempts = 3 } = config;
-  
+
   // Try first N proxies in parallel
   const proxyUrls = CORS_PROXIES.slice(0, parallelAttempts).map(fn => fn(targetUrl));
-  
+
   console.log(`🏁 Racing ${parallelAttempts} CORS proxies for ${targetUrl.substring(0, 50)}... (some may fail - this is normal)`);
-  
+
   return new Promise((resolve, reject) => {
     let completed = 0;
     let hasResolved = false;
     const errors: Error[] = [];
-    
+
     // Race all proxy attempts (silently handle failures - only log final result)
     proxyUrls.forEach((proxyUrl, index) => {
       fetchWithTimeout(proxyUrl, timeout)
@@ -93,13 +93,13 @@ export async function fetchThroughCorsProxyWithFallback(
   config: CorsProxyConfig = {}
 ): Promise<Response> {
   const { timeout = 5000 } = config;
-  
+
   // First try parallel approach (fast path)
   try {
     return await fetchThroughCorsProxy(targetUrl, { ...config, parallelAttempts: 3 });
   } catch (parallelError) {
     console.warn('⚠️ Parallel CORS fetch failed, trying remaining proxies sequentially...');
-    
+
     // Fallback: try remaining proxies one by one
     for (let i = 3; i < CORS_PROXIES.length; i++) {
       try {
@@ -114,7 +114,7 @@ export async function fetchThroughCorsProxyWithFallback(
         continue;
       }
     }
-    
+
     throw new Error('All CORS proxies exhausted');
   }
 }
