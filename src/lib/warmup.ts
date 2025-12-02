@@ -36,7 +36,7 @@ async function warmupEndpoint(
     const time = Math.round(endTime - startTime);
 
     // Don't care about response status for warmup, just that connection was made
-    console.log(`✅ Warmed up ${name} in ${time}ms`);
+    // console.log(`✅ Warmed up ${name} in ${time}ms`);
     return { service: name, status: 'success', time };
   } catch (error: any) {
     const endTime = performance.now();
@@ -44,7 +44,7 @@ async function warmupEndpoint(
 
     // Ignore abort errors (timeouts) as they are expected during warmup
     if (error.name !== 'AbortError') {
-      console.warn(`⚠️ Warmup failed for ${name} (${time}ms):`, error);
+      // console.warn(`⚠️ Warmup failed for ${name} (${time}ms):`, error);
     }
     return { service: name, status: 'failed', time };
   }
@@ -55,7 +55,8 @@ async function warmupEndpoint(
  * This should be called when the app initializes
  */
 export async function warmupBackendServices(): Promise<WarmupResult[]> {
-  console.log('🔥 Starting backend warmup...');
+  // Warmup started
+  const startTime = performance.now();
 
   // Use the backend API endpoints directly
   const warmupTasks = [
@@ -81,10 +82,8 @@ export async function warmupBackendServices(): Promise<WarmupResult[]> {
   });
 
   const successCount = warmupResults.filter(r => r.status === 'success').length;
-  const totalTime = warmupResults.reduce((sum, r) => sum + r.time, 0);
-  const avgTime = totalTime / warmupResults.length;
-
-  console.log(`🔥 Warmup complete: ${successCount}/${warmupResults.length} services ready (avg ${Math.round(avgTime)}ms)`);
+  const endTime = performance.now();
+  const duration = endTime - startTime;
 
   return warmupResults;
 }
