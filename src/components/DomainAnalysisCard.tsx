@@ -491,6 +491,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
         metaData.completenessScore = Math.round((filledFields / totalFields) * 100);
         onMetascraperResults(metaData);
       } catch (metaError: any) {
+        console.warn('Metascraper error:', metaError);
         const errorMessage = metaError.name === 'AbortError'
           ? 'Request timed out while fetching metadata (try again or website may be slow)'
           : metaError.message || 'Failed to fetch metadata';
