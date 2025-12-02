@@ -18,16 +18,30 @@ export async function checkCrtSh(domain: string) {
 
     try {
         console.log(`[CrtSh] Fetching subdomains for ${domain}...`);
-        // Fetch from crt.sh
+        // Fetch from crt.sh with timeout for mobile reliability
         // %.domain matches all subdomains
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 40000); // 40s timeout
+
         const response = await fetch(`${CRTSH_API_URL}/?q=%.${domain}&output=json`, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (compatible; DomainScope/1.0; +https://github.com/yourusername/domainscope)'
-            }
+            },
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             console.warn(`[CrtSh] API Error: ${response.status} ${response.statusText}`);
+
+            // Provide more helpful error messages
+            if (response.status === 429) {
+                return { error: 'Rate limit exceeded. Try again in a few minutes.' };
+            } else if (response.status >= 500) {
+                return { error: 'crt.sh service temporarily unavailable. Try again later.' };
+            }
+
             return { error: `crt.sh API Error: ${response.status}` };
         }
 
@@ -71,6 +85,12 @@ export async function checkCrtSh(domain: string) {
         return result;
 
     } catch (error: any) {
+        // Distinguish between timeout and other errors
+        if (error.name === 'AbortError') {
+            console.error(`[CrtSh] Request timeout for ${domain}`);
+            return { error: 'Request timed out. crt.sh may be slow or your connection is unstable.' };
+        }
+
         console.error(`[CrtSh] Error fetching data for ${domain}:`, error.message);
         return { error: 'Failed to fetch subdomains from crt.sh' };
     }

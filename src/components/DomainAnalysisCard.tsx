@@ -499,19 +499,48 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
     })();
 
 
-    // Kick off Subdomain Scan (Independent)
+    // Kick off Subdomain Scan (Independent) with retry logic for mobile
     void (async () => {
-      try {
-        const subRes = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/subdomain?domain=${encodeURIComponent(sanitizedDomain)}`, 20000);
-        if (subRes.ok) {
-          const subData = await subRes.json();
-          onSubdomainResults(subData);
-        } else {
-          onSubdomainResults({ error: 'Failed to fetch subdomains' });
+      const maxRetries = 2;
+      let attempt = 0;
+
+      while (attempt <= maxRetries) {
+        try {
+          attempt++;
+          console.log(`[Subdomain] Attempt ${attempt}/${maxRetries + 1}...`);
+
+          // Increased timeout to 45s for mobile networks and slow crt.sh responses
+          const subRes = await fetchWithTimeout(
+            `${API_BASE_URL}/api/v1/scan/subdomain?domain=${encodeURIComponent(sanitizedDomain)}`,
+            45000 // Increased from 20s to 45s
+          );
+
+          if (subRes.ok) {
+            const subData = await subRes.json();
+            onSubdomainResults(subData);
+            return; // Success, exit retry loop
+          } else {
+            console.warn(`[Subdomain] Attempt ${attempt} failed with status ${subRes.status}`);
+
+            // If this was the last attempt, show error
+            if (attempt > maxRetries) {
+              onSubdomainResults({ error: 'Failed to fetch subdomains after multiple attempts' });
+            }
+          }
+        } catch (e: any) {
+          console.warn(`[Subdomain] Attempt ${attempt} error:`, e.message);
+
+          // If this was the last attempt, show error
+          if (attempt > maxRetries) {
+            const errorMessage = e.name === 'AbortError'
+              ? 'Subdomain scan timed out (slow network or crt.sh unavailable)'
+              : 'Subdomain scan failed';
+            onSubdomainResults({ error: errorMessage });
+          } else {
+            // Wait before retrying (exponential backoff: 2s, 4s)
+            await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
+          }
         }
-      } catch (e) {
-        console.warn('⚠️ Subdomain fetch failed:', e);
-        onSubdomainResults({ error: 'Subdomain scan timed out or failed' });
       }
     })();
   };
