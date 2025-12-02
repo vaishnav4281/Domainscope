@@ -391,52 +391,44 @@ const LandingPage = () => {
 
             {/* CTA Section */}
             <div className="relative py-24 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-5xl mx-auto">
-                    <div className="relative rounded-[2.5rem] overflow-hidden isolate shadow-2xl shadow-blue-900/20 ring-1 ring-white/10">
-                        {/* Rich Gradient Background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-purple-600 to-blue-600"></div>
+                <div className="max-w-4xl mx-auto">
+                    <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 dark:ring-white/10">
+                        {/* Smooth Gradient Background */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-blue-600"></div>
 
-                        {/* Texture Overlay (Dot Pattern) */}
-                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '32px 32px' }}></div>
+                        {/* Subtle decorative glow */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none"></div>
 
-                        {/* Glass Shine/Glow Effects */}
-                        <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none mix-blend-overlay"></div>
-                        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black/10 rounded-full blur-3xl pointer-events-none mix-blend-overlay"></div>
-
-                        <div className="relative z-10 px-6 py-16 sm:px-16 sm:py-20 text-center">
-                            <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-6 tracking-tight drop-shadow-sm">
-                                Ready to Secure Your Domain?
+                        <div className="relative z-10 px-8 py-16 sm:px-16 sm:py-20 text-center">
+                            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6 tracking-tight">
+                                Start Your Security Journey
                             </h2>
-                            <p className="text-lg sm:text-xl text-blue-50/90 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
-                                Join thousands of security professionals using DomainScope to monitor, analyze, and protect their digital assets.
+                            <p className="text-lg text-blue-50/90 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
+                                Join thousands of security professionals. Get instant access to powerful domain analysis tools today.
                             </p>
 
-                            <div className="flex flex-col sm:flex-row justify-center gap-4 items-center">
+                            <div className="flex flex-col sm:flex-row justify-center gap-4">
                                 {isAuthenticated ? (
                                     <Link to="/dashboard" className="w-full sm:w-auto">
-                                        <Button size="lg" className="w-full h-14 px-10 text-lg bg-white text-slate-900 hover:bg-slate-50 border-0 shadow-xl shadow-black/10 hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-300 font-bold rounded-full">
-                                            Go to Dashboard <ArrowRight className="ml-2 h-5 w-5" />
+                                        <Button size="lg" className="w-full h-12 px-8 text-base bg-white text-blue-600 hover:bg-blue-50 border-0 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold rounded-xl">
+                                            Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>
                                     </Link>
                                 ) : (
                                     <>
                                         <Link to="/signup" className="w-full sm:w-auto">
-                                            <Button size="lg" className="w-full h-14 px-10 text-lg bg-white text-slate-900 hover:bg-slate-50 border-0 shadow-xl shadow-black/10 hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-300 font-bold rounded-full">
-                                                Get Started Free <ArrowRight className="ml-2 h-5 w-5" />
+                                            <Button size="lg" className="w-full h-12 px-8 text-base bg-white text-blue-600 hover:bg-blue-50 border-0 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold rounded-xl">
+                                                Get Started Free <ArrowRight className="ml-2 h-4 w-4" />
                                             </Button>
                                         </Link>
                                         <Link to="/login" className="w-full sm:w-auto">
-                                            <Button size="lg" variant="outline" className="w-full h-14 px-10 text-lg border-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/40 transition-all duration-300 font-semibold rounded-full backdrop-blur-sm">
-                                                Sign In
+                                            <Button size="lg" variant="outline" className="w-full h-12 px-8 text-base border-white/30 bg-white/10 text-white hover:bg-white/20 transition-all duration-300 font-semibold rounded-xl backdrop-blur-sm">
+                                                Log In
                                             </Button>
                                         </Link>
                                     </>
                                 )}
                             </div>
-
-                            <p className="mt-8 text-sm text-blue-100/60 font-medium">
-                                No credit card required • Free tier available • Cancel anytime
-                            </p>
                         </div>
                     </div>
                 </div>
