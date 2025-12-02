@@ -503,6 +503,9 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
     // Only run if subdomains module is enabled
     if (enabledModules.subdomains) {
       void (async () => {
+        // Small delay to allow UI to settle and prevent network contention on mobile
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         const maxRetries = 2;
         let attempt = 0;
 
@@ -511,10 +514,10 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             attempt++;
             console.log(`[Subdomain] Attempt ${attempt}/${maxRetries + 1}...`);
 
-            // Increased timeout to 45s for mobile networks and slow crt.sh responses
+            // Increased timeout to 60s for mobile networks and slow crt.sh responses
             const subRes = await fetchWithTimeout(
               `${API_BASE_URL}/api/v1/scan/subdomain?domain=${encodeURIComponent(sanitizedDomain)}`,
-              45000 // Increased from 20s to 45s
+              60000 // Increased to 60s
             );
 
             if (subRes.ok) {
@@ -526,7 +529,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
 
               // If this was the last attempt, show error
               if (attempt > maxRetries) {
-                onSubdomainResults({ error: 'Failed to fetch subdomains after multiple attempts' });
+                onSubdomainResults({ error: 'Failed to fetch subdomains (API unavailable or timed out)' });
               }
             }
           } catch (e: any) {
@@ -536,7 +539,7 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
             if (attempt > maxRetries) {
               const errorMessage = e.name === 'AbortError'
                 ? 'Subdomain scan timed out (slow network or crt.sh unavailable)'
-                : 'Subdomain scan failed';
+                : 'Subdomain scan failed (Network Error)';
               onSubdomainResults({ error: errorMessage });
             } else {
               // Wait before retrying (exponential backoff: 2s, 4s)
