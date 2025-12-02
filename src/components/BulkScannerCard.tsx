@@ -13,6 +13,7 @@ const cleanDomain = (raw: string): string => {
   if (!raw) return "";
   return raw
     .trim()
+    .toLowerCase()
     .replace(/^https?:\/\//i, "")
     .replace(/^www\./i, "")
     .split(/[\s\/?#]/)[0]

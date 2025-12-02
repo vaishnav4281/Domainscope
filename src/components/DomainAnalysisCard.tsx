@@ -64,8 +64,9 @@ const DomainAnalysisCard = ({ onResults, onMetascraperResults, onVirusTotalResul
     // Notify parent that scan is starting
     if (onStartScan) onStartScan();
 
-    // Sanitize domain: remove protocol and trailing slashes
+    // Sanitize domain: remove protocol, trailing slashes, and normalize to lowercase
     const sanitizedDomain = domain.trim()
+      .toLowerCase()                // Normalize to lowercase
       .replace(/^https?:\/\//, '')  // Remove http:// or https://
       .replace(/\/+$/, '')          // Remove trailing slashes
       .replace(/^www\./, '')
