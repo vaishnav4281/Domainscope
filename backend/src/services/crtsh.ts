@@ -6,13 +6,15 @@ const CRTSH_API_URL = 'https://crt.sh';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export async function checkCrtSh(domain: string) {
-    const cacheKey = `crtsh_v2:${domain}`;
+    // Normalize domain to lowercase for consistent caching and comparison
+    const normalizedDomain = domain.toLowerCase();
+    const cacheKey = `crtsh_v2:${normalizedDomain}`;
 
     // Check cache first
     try {
         const cached = await redis.get(cacheKey);
         if (cached) {
-            console.log(`[CrtSh] Returning cached result for ${domain}`);
+            console.log(`[CrtSh] Returning cached result for ${normalizedDomain}`);
             return JSON.parse(cached);
         }
     } catch (err) {
@@ -24,13 +26,13 @@ export async function checkCrtSh(domain: string) {
 
     while (attempt <= maxRetries) {
         try {
-            console.log(`[CrtSh] Fetching subdomains for ${domain} (Attempt ${attempt + 1}/${maxRetries + 1})...`);
+            console.log(`[CrtSh] Fetching subdomains for ${normalizedDomain} (Attempt ${attempt + 1}/${maxRetries + 1})...`);
 
             const controller = new AbortController();
             // Increased timeout to 60s for mobile networks and slow crt.sh responses
             const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-            const response = await fetch(`${CRTSH_API_URL}/?q=%.${domain}&output=json`, {
+            const response = await fetch(`${CRTSH_API_URL}/?q=%.${normalizedDomain}&output=json`, {
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (compatible; DomainScope/1.0; +https://github.com/yourusername/domainscope)'
                 },
@@ -60,7 +62,7 @@ export async function checkCrtSh(domain: string) {
 
             if (!Array.isArray(data)) {
                 console.warn('[CrtSh] Unexpected response format');
-                return { subdomains: [] };
+                return { subdomains: [], count: 0 };
             }
 
             // Extract and deduplicate subdomains
@@ -70,10 +72,10 @@ export async function checkCrtSh(domain: string) {
                 if (nameValue) {
                     const names = nameValue.split('\n');
                     names.forEach((name: string) => {
-                        // Clean up the name (remove *. prefix if present)
-                        const cleanName = name.trim().replace(/^\*\./, '');
-                        // Ensure it ends with the target domain to filter out unrelated results (though crt.sh query should handle this)
-                        if (cleanName.endsWith(domain) && cleanName !== domain) {
+                        // Clean up the name (remove *. prefix if present) and normalize to lowercase
+                        const cleanName = name.trim().replace(/^\*\./, '').toLowerCase();
+                        // Ensure it ends with the target domain to filter out unrelated results
+                        if (cleanName.endsWith(normalizedDomain) && cleanName !== normalizedDomain) {
                             subdomains.add(cleanName);
                         }
                     });
