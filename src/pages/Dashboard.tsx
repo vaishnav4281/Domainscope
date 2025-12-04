@@ -436,38 +436,38 @@ const Dashboard = () => {
                                 />
                                 {results.length > 0 && (
                                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                        {/* Priority Cards: Core Results → Security Intel → VirusTotal */}
                                         {enabledModules.core && <ResultsPanel results={results} vtSummaryByDomain={vtSummaryByDomain} />}
+                                        {enabledModules.security && <SecurityIntelPanel results={results as any} />}
+                                        {enabledModules.virustotal && <VirusTotalResults results={virusTotalResults} />}
 
-                                        {/* New Modules Rendering */}
+                                        {/* Secondary Cards */}
+                                        {enabledModules.subdomains && <SubdomainResults results={subdomainResults} />}
+                                        {enabledModules.metadata && <MetascraperResults results={metascraperResults} />}
+
+                                        {/* New OSINT Modules */}
                                         {enabledModules.extendedDns && extendedDNSResults && (
-                                            <div className="grid gap-8"><ExtendedDNSResults results={extendedDNSResults} /></div>
+                                            <ExtendedDNSResults results={extendedDNSResults} />
                                         )}
                                         {enabledModules.emailSecurity && emailSecurityResults && (
-                                            <div className="grid gap-8"><EmailSecurityResults results={emailSecurityResults} /></div>
+                                            <EmailSecurityResults results={emailSecurityResults} />
                                         )}
                                         {enabledModules.ssl && sslResults && (
-                                            <div className="grid gap-8"><SSLAnalysisResults results={sslResults} /></div>
+                                            <SSLAnalysisResults results={sslResults} />
                                         )}
                                         {enabledModules.headers && headersResults && (
-                                            <div className="grid gap-8"><SecurityHeadersResults results={headersResults} /></div>
+                                            <SecurityHeadersResults results={headersResults} />
                                         )}
                                         {enabledModules.threatIntel && (threatIntelResults.safeBrowsing || threatIntelResults.urlScan || threatIntelResults.otx) && (
-                                            <div className="grid gap-8">
-                                                <ThreatIntelResults
-                                                    safeBrowsing={threatIntelResults.safeBrowsing}
-                                                    urlScan={threatIntelResults.urlScan}
-                                                    otx={threatIntelResults.otx}
-                                                />
-                                            </div>
+                                            <ThreatIntelResults
+                                                safeBrowsing={threatIntelResults.safeBrowsing}
+                                                urlScan={threatIntelResults.urlScan}
+                                                otx={threatIntelResults.otx}
+                                            />
                                         )}
                                         {enabledModules.wayback && waybackResults && (
-                                            <div className="grid gap-8"><WaybackResults results={waybackResults} /></div>
+                                            <WaybackResults results={waybackResults} />
                                         )}
-
-                                        {enabledModules.security && <SecurityIntelPanel results={results as any} />}
-                                        {enabledModules.subdomains && <SubdomainResults results={subdomainResults} />}
-                                        {enabledModules.virustotal && <VirusTotalResults results={virusTotalResults} />}
-                                        {enabledModules.metadata && <MetascraperResults results={metascraperResults} />}
                                     </div>
                                 )}
                             </div>
