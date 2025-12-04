@@ -91,6 +91,17 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
     *   **CORS Protection**: API access is strictly limited to the trusted frontend domain.
     *   **Parameter Pollution**: Protected against HTTP Parameter Pollution (HPP) attacks.
 
+### 11. Extended OSINT Features (New)
+*   **Feature**: A comprehensive suite of advanced intelligence tools added to the core platform.
+*   **Capabilities**:
+    *   **Extended DNS**: Full record enumeration (MX, NS, TXT, SOA, CAA, PTR).
+    *   **Email Security**: Automated SPF/DKIM/DMARC/BIMI validation and scoring.
+    *   **SSL Analysis**: Deep inspection of certificate chains, ciphers, and validity.
+    *   **HTTP Headers**: Security header analysis (HSTS, CSP, X-Frame-Options).
+    *   **Threat Intel**: Real-time checks against Google Safe Browsing, URLScan.io, and AlienVault OTX.
+    *   **Time Travel**: Historical snapshots via Wayback Machine.
+*   **Implementation**: 9 new micro-services in `backend/src/services/` running in parallel.
+
 ## 🛠️ Technology Stack
 
 ### Frontend
@@ -124,3 +135,7 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
 | **AbuseIPDB** | IP Abuse Reporting | `backend/src/services/abuseipdb.ts` |
 | **crt.sh** | Subdomain Discovery via Certificate Transparency | `backend/src/services/crtsh.ts` |
 | **Resend** | Transactional Emails | `backend/src/services/email.ts` |
+| **Google Safe Browsing** | Malware & Phishing Detection | `backend/src/services/google-safe-browsing.ts` |
+| **URLScan.io** | Website Scanning & Screenshots | `backend/src/services/urlscan.ts` |
+| **AlienVault OTX** | Open Threat Intelligence | `backend/src/services/alienvault-otx.ts` |
+| **Wayback Machine** | Historical Snapshots | `backend/src/services/wayback.ts` |

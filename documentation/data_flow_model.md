@@ -34,7 +34,9 @@ This document describes the flow of data through the DomainScope system, from us
         *   **WHOIS**: Queries Port 43 or RDAP endpoints.
         *   **DNS**: Queries public DNS resolvers (Google/Cloudflare).
         *   **Subdomains**: Queries crt.sh for certificate logs.
-        *   **Threat Intel**: Calls VirusTotal, IPInfo, ProxyCheck.io, AbuseIPDB APIs.
+        *   **Threat Intel**: Calls VirusTotal, IPInfo, ProxyCheck.io, AbuseIPDB, Google Safe Browsing, URLScan.io, AlienVault OTX.
+        *   **Security Analysis**: Checks SSL Certificates, HTTP Headers, Email Security (SPF/DKIM/DMARC).
+        *   **Historical**: Queries Wayback Machine.
     *   **Aggregation**: Results are combined into a standardized JSON format.
 6.  **Storage**:
     *   Final result is saved to **PostgreSQL** (`ScanHistory` table).

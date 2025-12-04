@@ -83,6 +83,11 @@ The application needs to connect to external APIs for intelligence gathering. Pl
 | `crt.sh` | 443 | Certificate Transparency Logs (Subdomains) |
 | `whois.iana.org` | 43 | WHOIS Lookups |
 | `proxycheck.io` | 80/443 | Proxy/VPN Detection API |
+| `safebrowsing.googleapis.com` | 443 | Google Safe Browsing API (Malware/Phishing) |
+| `urlscan.io` | 443 | URLScan.io Website Scanner |
+| `otx.alienvault.com` | 443 | AlienVault OTX Threat Intelligence |
+| `web.archive.org` | 443 | Wayback Machine (Internet Archive) |
+| `api.ip2location.io` | 443 | IP2Location Geolocation API |
 | `*` (Wildcard) | 53 (UDP/TCP) | DNS Resolution (Google 8.8.8.8 / Cloudflare 1.1.1.1) |
 | `*` (Wildcard) | 43 (TCP) | WHOIS Servers (Various TLDs) |
 

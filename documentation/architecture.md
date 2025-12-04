@@ -46,6 +46,10 @@ graph TD
         DNS["🗺️ DNS Resolvers"]:::ext
         CRT["🔍 crt.sh (Subdomains)"]:::ext
         PC["🛡️ ProxyCheck.io"]:::ext
+        GSB["🚫 Google Safe Browsing"]:::ext
+        URLS["📸 URLScan.io"]:::ext
+        OTX["👽 AlienVault OTX"]:::ext
+        WB["🕰️ Wayback Machine"]:::ext
     end
 
     %% Connections
@@ -65,6 +69,10 @@ graph TD
     Worker -->|Resolve| DNS
     Worker -->|Discover| CRT
     Worker -->|Verify| PC
+    Worker -->|Check| GSB
+    Worker -->|Scan| URLS
+    Worker -->|Intel| OTX
+    Worker -->|History| WB
     
     Worker -->|Persist Result| DB
     Worker -->|Update Cache| Redis
@@ -89,7 +97,7 @@ graph TD
 *   **Technology**: Node.js, BullMQ (Redis-based queues).
 *   **Responsibility**:
     *   Executes long-running tasks asynchronously.
-    *   Fetches data from multiple external sources (WHOIS, DNS, Threat Intel, ProxyCheck, Subdomains) in parallel.
+    *   Fetches data from multiple external sources (WHOIS, DNS, Threat Intel, ProxyCheck, Subdomains, Safe Browsing, OTX) in parallel.
     *   Aggregates results and updates the database.
     *   Handles retries and failures (Dead Letter Queues).
 

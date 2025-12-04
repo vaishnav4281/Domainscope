@@ -101,6 +101,10 @@
                 │ • crt.sh (Subdomains) │
                 │ • IPInfo (IP Intel)   │
                 │ • ProxyCheck.io       │
+                │ • Google Safe Browse  │
+                │ • URLScan.io          │
+                │ • AlienVault OTX      │
+                │ • Wayback Machine     │
                 └───────────────────────┘
 ```
 
@@ -626,6 +630,29 @@ groups:
         for: 1m
         severity: critical
 ```
+
+---
+
+### 8. Comprehensive OSINT Engine **★★★★★**
+**Pattern**: Aggregation & Enrichment
+
+**Problem Statement**:
+Basic WHOIS and DNS lookups are insufficient for modern threat analysis. Analysts need a 360-degree view including email security, SSL posture, and historical data.
+
+**Solution**:
+A multi-layered intelligence engine that aggregates data from 15+ sources into a unified risk profile.
+
+**Capabilities**:
+- **Extended DNS**: Full record enumeration (MX, NS, TXT, SOA, CAA, PTR).
+- **Email Security**: Automated SPF/DKIM/DMARC/BIMI validation and scoring.
+- **SSL Analysis**: Deep inspection of certificate chains, ciphers, and validity.
+- **Threat Intel**: Real-time cross-referencing with Google Safe Browsing, URLScan.io, and AlienVault OTX.
+- **Time Travel**: Historical snapshots via Wayback Machine integration.
+
+**Implementation**:
+- **Parallel Execution**: All checks run concurrently for maximum speed.
+- **Smart Caching**: Each data point has an optimized TTL (e.g., DNS=1h, SSL=24h).
+- **Fail-Safe**: Individual module failures do not block the main report.
 
 ---
 

@@ -66,6 +66,11 @@
                 │ • WHOIS Servers       │
                 │ • ProxyCheck.io       │
                 │ • DNSBL Providers     │
+                │ • Google Safe Browse  │
+                │ • URLScan.io          │
+                │ • AlienVault OTX      │
+                │ • Wayback Machine     │
+                │ • IP2Location         │
                 └───────────────────────┘
 ```
 
@@ -290,11 +295,15 @@ DomainScope is fully observable — you can understand what's happening, where i
 Every scan produces clean, structured, and insightful domain intelligence — crafted for analysts, researchers, and automated pipelines. 📦✨ The results are easy to understand, nicely formatted, and ready to export.
 
 * 🪪 **WHOIS details:** Registrar, dates, and contact info.
-* 🌐 **DNS records:** A, MX, NS, TXT, and CNAME records.
+* 🌐 **DNS records:** A, AAAA, MX, NS, TXT, CNAME, SOA, CAA, and PTR (Reverse DNS).
+* 📧 **Email Security:** SPF, DKIM, DMARC, BIMI validation with deliverability scoring.
+* 🔒 **SSL/TLS Analysis:** Certificate details, chain validation, security grading, expiry warnings.
+* 🛡️ **HTTP Security:** HSTS, CSP, X-Frame-Options, and comprehensive header analysis.
 * 📜 **Passive DNS:** Historical IP resolutions and domain associations.
 * 🔍 **Subdomain Discovery:** All subdomains found via Certificate Transparency logs.
 * 🛰️ **IP & ASN data:** Geolocation, ISP, and organization details.
-* 🔥 **Threat scores:** Real-time checks via VirusTotal, IPInfo, ProxyCheck.io, and AbuseIPDB.
+* 🔥 **Threat Intelligence:** Real-time checks via VirusTotal, Google Safe Browsing, URLScan.io, AlienVault OTX.
+* 🕰️ **Historical Data:** Wayback Machine snapshots showing domain evolution over time.
 * 🛡️ **Security Signals:** VPN/Proxy/Tor detection and DNSBL status.
 * 🏷️ **Domain metadata:** Tech stack, hosting info, and site description.
 * 📤 **Bulk exports:** Full CSV reports for larger workflows.
@@ -308,8 +317,12 @@ Here is an improved, clean, and accurate comparison table—benchmarking DomainS
 | Feature                  | Typical Tools (WhoisXML, ViewDNS, DNSDumpster) | **DomainScope**                                         |
 | ------------------------ | ---------------------------------------------- | ------------------------------------------------------- |
 | 🪪 **WHOIS Data**        | ✔️ Basic lookup                                | ✔️ Structured, enriched, historical snapshots           |
-| 🌐 **DNS Records**       | ✔️ Basic A / NS / MX                           | ✔️ Full DNS set, clean summaries, added insights        |
-| 🔥 **Threat Checks**     | ❌ Often missing                                | ✔️ Integrated threat scoring engine                     |
+| 🌐 **DNS Records**       | ✔️ Basic A / NS / MX                           | ✔️ Complete: A, AAAA, MX, NS, TXT, CNAME, SOA, CAA, PTR |
+| 📧 **Email Security**    | ❌ Not included                                | ✔️ SPF, DKIM, DMARC, BIMI with scoring                  |
+| 🔒 **SSL/TLS Analysis**  | ❌ Not included                                | ✔️ Certificate validation, chain, security grading      |
+| 🛡️ **Security Headers**  | ❌ Not included                                | ✔️ HSTS, CSP, and 10+ header checks                    |
+| 🔥 **Threat Checks**     | ❌ Often missing                                | ✔️ 6+ threat intel sources (VT, Google, URLScan, OTX)  |
+| 🕰️ **Historical Data**   | ❌ Limited/paid                                | ✔️ Wayback Machine + Passive DNS                        |
 | 🏷️ **Metadata**         | ❌ Rarely included                              | ✔️ Hosting info, categories, tech stack, tags           |
 | 📤 **Bulk Scanning**     | ❌ Limited / paid                               | ✔️ Fast, parallel, included                             |
 | 🎨 **UI & UX**           | ❌ Outdated, cluttered                          | ⭐ Modern, responsive, user‑friendly                     |

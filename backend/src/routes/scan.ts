@@ -12,6 +12,16 @@ import { authenticateToken } from '../middleware/auth.js';
 import type { AuthRequest } from '../middleware/auth.js';
 import { prisma } from '../app.js';
 
+// New OSINT services
+import { getExtendedDNS, getReverseDNS } from '../services/dns-extended.js';
+import { checkEmailSecurity } from '../services/email-security.js';
+import { analyzeCertificate } from '../services/ssl-analysis.js';
+import { analyzeSecurityHeaders } from '../services/http-headers.js';
+import { checkGoogleSafeBrowsing } from '../services/google-safe-browsing.js';
+import { checkURLScan, searchURLScan } from '../services/urlscan.js';
+import { checkAlienVaultOTX } from '../services/alienvault-otx.js';
+import { getWaybackSnapshots } from '../services/wayback.js';
+
 const router = express.Router();
 
 router.get('/dns', async (req, res) => {
@@ -91,6 +101,110 @@ router.get('/subdomain', async (req, res) => {
     }
     const result = await checkCrtSh(domain);
     res.json(result || {});
+});
+
+// ========================================
+// NEW OSINT FEATURES
+// ========================================
+
+// Extended DNS Records (MX, NS, TXT, AAAA, CNAME, SOA, CAA)
+router.get('/dns-extended', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await getExtendedDNS(domain);
+    res.json(result);
+});
+
+// Reverse DNS (PTR records)
+router.get('/reverse-dns', async (req, res) => {
+    const { ip } = req.query;
+    if (!ip || typeof ip !== 'string') {
+        return res.status(400).json({ error: 'Missing IP parameter' });
+    }
+    const result = await getReverseDNS(ip);
+    res.json(result);
+});
+
+// Email Security (SPF, DKIM, DMARC, BIMI)
+router.get('/email-security', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await checkEmailSecurity(domain);
+    res.json(result);
+});
+
+// SSL/TLS Certificate Analysis
+router.get('/ssl-cert', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await analyzeCertificate(domain);
+    res.json(result);
+});
+
+// HTTP Security Headers
+router.get('/http-headers', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await analyzeSecurityHeaders(domain);
+    res.json(result);
+});
+
+// Google Safe Browsing
+router.get('/safe-browsing', async (req, res) => {
+    const { url } = req.query;
+    if (!url || typeof url !== 'string') {
+        return res.status(400).json({ error: 'Missing URL parameter' });
+    }
+    const result = await checkGoogleSafeBrowsing(url);
+    res.json(result);
+});
+
+// URLScan.io - Scan
+router.get('/urlscan', async (req, res) => {
+    const { url } = req.query;
+    if (!url || typeof url !== 'string') {
+        return res.status(400).json({ error: 'Missing URL parameter' });
+    }
+    const result = await checkURLScan(url);
+    res.json(result);
+});
+
+// URLScan.io - Search
+router.get('/urlscan-search', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await searchURLScan(domain);
+    res.json(result);
+});
+
+// AlienVault OTX
+router.get('/alienvault-otx', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await checkAlienVaultOTX(domain);
+    res.json(result);
+});
+
+// Wayback Machine (Internet Archive)
+router.get('/wayback', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    const result = await getWaybackSnapshots(domain);
+    res.json(result);
 });
 
 router.post('/full', authenticateToken, async (req: AuthRequest, res) => {

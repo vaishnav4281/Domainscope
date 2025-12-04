@@ -127,6 +127,14 @@ Business logic and external API integrations.
 | **`crtsh.ts`** | Integration with **crt.sh** for subdomain discovery. |
 | **`whois.ts`** | Performs WHOIS lookups and parses the data. |
 | **`email.ts`** | Handles sending emails (verification, welcome, password reset) using **Resend**. |
+| **`dns-extended.ts`** | **NEW** Comprehensive DNS record lookups (MX, NS, TXT, SOA, CAA, PTR). |
+| **`email-security.ts`** | **NEW** Validates SPF, DKIM, DMARC, and BIMI records. |
+| **`ssl-analysis.ts`** | **NEW** Deep inspection of SSL/TLS certificates and security grading. |
+| **`http-headers.ts`** | **NEW** Analyzes HTTP security headers (HSTS, CSP, etc.). |
+| **`google-safe-browsing.ts`** | **NEW** Checks URLs against Google's malware/phishing lists. |
+| **`urlscan.ts`** | **NEW** Integration with URLScan.io for website scanning. |
+| **`alienvault-otx.ts`** | **NEW** Fetches threat intelligence from AlienVault OTX. |
+| **`wayback.ts`** | **NEW** Retrieves historical snapshots from the Wayback Machine. |
 
 ### Middleware (`/backend/src/middleware`)
 Express middleware functions.
