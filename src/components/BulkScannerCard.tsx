@@ -467,14 +467,14 @@ const BulkScannerCard = ({
               fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/urlscan-search?domain=${encodeURIComponent(domain)}`, 30000),
               fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/alienvault-otx?domain=${encodeURIComponent(domain)}`, 15000)
             ]);
-            const results: any = {};
+            const results: any = { domain };
             if (urlScanRes.status === 'fulfilled' && urlScanRes.value.ok) {
               results.urlScan = await urlScanRes.value.json();
             }
             if (otxRes.status === 'fulfilled' && otxRes.value.ok) {
               results.otx = await otxRes.value.json();
             }
-            if (Object.keys(results).length > 0) onThreatIntelResults(results);
+            if (Object.keys(results).length > 1) onThreatIntelResults(results); // > 1 because 'domain' is always there
           } catch (e) { console.warn('Threat Intel failed:', e); }
         })() : Promise.resolve(),
         onWaybackResults && enabledModules.wayback ? (async () => {

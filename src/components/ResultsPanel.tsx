@@ -27,6 +27,13 @@ interface Result {
   latitude?: string;
   isp: string;
   timestamp: string;
+  // Optional OSINT data attached for CSV export
+  extendedDNS?: any;
+  emailSecurity?: any;
+  sslResults?: any;
+  headersResults?: any;
+  threatIntel?: any;
+  waybackResults?: any;
 }
 
 interface VtSummary {
@@ -40,9 +47,23 @@ interface VtSummary {
 interface ResultsPanelProps {
   results: Result[];
   vtSummaryByDomain?: Record<string, VtSummary>;
+  // New OSINT data
+  extendedDNS?: any;
+  emailSecurity?: any;
+  sslResults?: any;
+  headersResults?: any;
+  waybackResults?: any;
 }
 
-const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
+const ResultsPanel = ({
+  results,
+  vtSummaryByDomain,
+  extendedDNS,
+  emailSecurity,
+  sslResults,
+  headersResults,
+  waybackResults
+}: ResultsPanelProps) => {
   const { toast } = useToast();
 
   const exportToCsv = () => {
@@ -67,6 +88,10 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
       "Name Servers",
       "DNS Records",
       "Passive DNS",
+      // Extended DNS
+      "MX Records",
+      "TXT Records",
+      "AAAA (IPv6)",
       // Geolocation
       "Country",
       "Region",
@@ -74,12 +99,28 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
       "Latitude",
       "Longitude",
       "ISP",
+      // Email Security
+      "SPF Status",
+      "DKIM Status",
+      "DMARC Status",
+      // SSL Certificate
+      "SSL Valid",
+      "SSL Issuer",
+      "SSL Expires",
+      "SSL Grade",
+      // HTTP Security Headers
+      "HSTS",
+      "X-Frame-Options",
+      "Content-Security-Policy",
+      "X-XSS-Protection",
       // Security Intelligence
       "VPN/Proxy Detected",
       "Abuse Score",
       "VT Reputation",
       "VT Malicious Count",
       "VT Risk Level",
+      // Wayback
+      "Wayback Snapshots",
       // Metadata
       "Scan Timestamp"
     ];
@@ -91,6 +132,63 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
         return '"' + s.replace(/"/g, '""') + '"';
       }
       return s;
+    };
+
+    // Helper to extract DNS records
+    const getDnsRecords = (row: Result, type: string) => {
+      const data = row.extendedDNS || extendedDNS;
+      if (!data?.records) return "-";
+      const records = data.records[type];
+      if (!records || (Array.isArray(records) && records.length === 0)) return "-";
+      if (Array.isArray(records)) {
+        return records.map((r: any) => {
+          if (typeof r === 'string') return r;
+          if (type === 'MX' && r.exchange) return `${r.exchange} (${r.priority})`;
+          return JSON.stringify(r);
+        }).join("; ");
+      }
+      return JSON.stringify(records);
+    };
+
+    // Email security helpers
+    const getEmailStatus = (row: Result, type: string) => {
+      const data = row.emailSecurity || emailSecurity;
+      if (!data) return "-";
+      const record = data[type];
+      if (!record) return "-";
+      if (record.exists === false) return "Not configured";
+      if (record.valid !== undefined) return record.valid ? "Valid" : "Invalid";
+      if (record.record) return "Configured";
+      return "-";
+    };
+
+    // SSL helpers
+    const getSslData = (row: Result, field: string) => {
+      const data = row.sslResults || sslResults;
+      if (!data || data.error) return "-";
+      const cert = data.certificate || {};
+      const validity = data.validity || {};
+      switch (field) {
+        case 'valid': return validity.isValid ? "Yes" : "No";
+        case 'issuer': return cert.issuer?.O || cert.issuer?.CN || "-";
+        case 'expires': return cert.validTo ? new Date(cert.validTo).toLocaleDateString() : "-";
+        case 'grade': return data.grade || "-";
+        default: return "-";
+      }
+    };
+
+    // Headers helpers
+    const getHeader = (row: Result, header: string) => {
+      const data = row.headersResults || headersResults;
+      if (!data?.headers) return "-";
+      return data.headers[header] ? "Present" : "Missing";
+    };
+
+    // Wayback count
+    const getWaybackCount = (row: Result) => {
+      const data = row.waybackResults || waybackResults;
+      if (!data?.snapshots) return "-";
+      return data.snapshots.length || 0;
     };
 
     const csvContent = [
@@ -113,6 +211,10 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
           escapeCsv((result.name_servers || []).join("; ")),
           escapeCsv(result.dns_records || "-"),
           escapeCsv(result.passive_dns || "-"),
+          // Extended DNS
+          escapeCsv(getDnsRecords(result, 'MX')),
+          escapeCsv(getDnsRecords(result, 'TXT')),
+          escapeCsv(getDnsRecords(result, 'AAAA')),
           // Geolocation
           escapeCsv(result.country),
           escapeCsv(result.region || "-"),
@@ -120,12 +222,28 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
           escapeCsv(result.latitude || "-"),
           escapeCsv(result.longitude || "-"),
           escapeCsv(result.isp),
+          // Email Security
+          escapeCsv(getEmailStatus(result, 'spf')),
+          escapeCsv(getEmailStatus(result, 'dkim')),
+          escapeCsv(getEmailStatus(result, 'dmarc')),
+          // SSL Certificate
+          escapeCsv(getSslData(result, 'valid')),
+          escapeCsv(getSslData(result, 'issuer')),
+          escapeCsv(getSslData(result, 'expires')),
+          escapeCsv(getSslData(result, 'grade')),
+          // HTTP Security Headers
+          escapeCsv(getHeader(result, 'Strict-Transport-Security')),
+          escapeCsv(getHeader(result, 'X-Frame-Options')),
+          escapeCsv(getHeader(result, 'Content-Security-Policy')),
+          escapeCsv(getHeader(result, 'X-XSS-Protection')),
           // Security Intelligence
           escapeCsv(result.is_vpn_proxy),
           escapeCsv(result.abuse_score),
           escapeCsv(vt_rep),
           escapeCsv(vt_mal),
           escapeCsv(vt_risk),
+          // Wayback
+          escapeCsv(getWaybackCount(result)),
           // Metadata
           escapeCsv(result.timestamp)
         ].join(",");
@@ -145,7 +263,7 @@ const ResultsPanel = ({ results, vtSummaryByDomain }: ResultsPanelProps) => {
 
     toast({
       title: "Export Complete",
-      description: `Exported ${results.length} results to CSV`,
+      description: `Exported ${results.length} results to CSV with OSINT data`,
     });
   };
 

@@ -214,12 +214,32 @@ const Dashboard = () => {
 
 
     // New Handlers
-    const handleExtendedDNSResults = (res: any) => setExtendedDNSResults(res);
-    const handleEmailSecurityResults = (res: any) => setEmailSecurityResults(res);
-    const handleSSLResults = (res: any) => setSSLResults(res);
-    const handleHeadersResults = (res: any) => setHeadersResults(res);
-    const handleThreatIntelResults = (res: any) => setThreatIntelResults((prev: any) => ({ ...prev, ...res }));
-    const handleWaybackResults = (res: any) => setWaybackResults(res);
+    const handleExtendedDNSResults = (res: any) => {
+        setExtendedDNSResults(res);
+        setResults(prev => prev.map(r => r.domain === res.domain ? { ...r, extendedDNS: res } : r));
+    };
+    const handleEmailSecurityResults = (res: any) => {
+        setEmailSecurityResults(res);
+        setResults(prev => prev.map(r => r.domain === res.domain ? { ...r, emailSecurity: res } : r));
+    };
+    const handleSSLResults = (res: any) => {
+        setSSLResults(res);
+        setResults(prev => prev.map(r => r.domain === res.domain ? { ...r, sslResults: res } : r));
+    };
+    const handleHeadersResults = (res: any) => {
+        setHeadersResults(res);
+        setResults(prev => prev.map(r => r.domain === res.domain ? { ...r, headersResults: res } : r));
+    };
+    const handleThreatIntelResults = (res: any) => {
+        setThreatIntelResults((prev: any) => ({ ...prev, ...res }));
+        if (res.domain) {
+            setResults(prev => prev.map(r => r.domain === res.domain ? { ...r, threatIntel: res } : r));
+        }
+    };
+    const handleWaybackResults = (res: any) => {
+        setWaybackResults(res);
+        setResults(prev => prev.map(r => r.domain === res.domain ? { ...r, waybackResults: res } : r));
+    };
 
     const vtSummaryByDomain = useMemo(() => {
         const map: Record<string, any> = {};
@@ -437,7 +457,17 @@ const Dashboard = () => {
                                 {results.length > 0 && (
                                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                                         {/* Priority Cards: Core Results → Security Intel → VirusTotal */}
-                                        {enabledModules.core && <ResultsPanel results={results} vtSummaryByDomain={vtSummaryByDomain} />}
+                                        {enabledModules.core && (
+                                            <ResultsPanel
+                                                results={results}
+                                                vtSummaryByDomain={vtSummaryByDomain}
+                                                extendedDNS={extendedDNSResults}
+                                                emailSecurity={emailSecurityResults}
+                                                sslResults={sslResults}
+                                                headersResults={headersResults}
+                                                waybackResults={waybackResults}
+                                            />
+                                        )}
                                         {enabledModules.security && <SecurityIntelPanel results={results as any} />}
                                         {enabledModules.virustotal && <VirusTotalResults results={virusTotalResults} />}
 
@@ -495,7 +525,17 @@ const Dashboard = () => {
                                 {results.length > 0 && (
                                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
                                         {/* Priority Cards */}
-                                        {enabledModules.core && <ResultsPanel results={results} vtSummaryByDomain={vtSummaryByDomain} />}
+                                        {enabledModules.core && (
+                                            <ResultsPanel
+                                                results={results}
+                                                vtSummaryByDomain={vtSummaryByDomain}
+                                                extendedDNS={extendedDNSResults}
+                                                emailSecurity={emailSecurityResults}
+                                                sslResults={sslResults}
+                                                headersResults={headersResults}
+                                                waybackResults={waybackResults}
+                                            />
+                                        )}
                                         {enabledModules.security && <SecurityIntelPanel results={results as any} />}
                                         {enabledModules.virustotal && <VirusTotalResults results={virusTotalResults} />}
 
