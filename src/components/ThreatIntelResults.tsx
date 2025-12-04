@@ -62,9 +62,11 @@ const ThreatIntelResults: React.FC<ThreatIntelResultsProps> = ({ safeBrowsing, u
                                     {urlScan.results.slice(0, 3).map((scan: any, i: number) => (
                                         <div key={i} className="flex items-center justify-between text-sm">
                                             <span className="truncate max-w-[200px]">{scan.task?.url || scan.page?.url}</span>
-                                            <a href={scan.result} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
-                                                View Report <ExternalLink className="h-3 w-3" />
-                                            </a>
+                                            {scan.result && (
+                                                <a href={scan.result} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline flex items-center gap-1">
+                                                    View Report <ExternalLink className="h-3 w-3" />
+                                                </a>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
