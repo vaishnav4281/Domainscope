@@ -119,8 +119,6 @@ const ResultsPanel = ({
       "VT Reputation",
       "VT Malicious Count",
       "VT Risk Level",
-      // Wayback
-      "Wayback Snapshots",
       // Metadata
       "Scan Timestamp"
     ];
@@ -242,8 +240,6 @@ const ResultsPanel = ({
           escapeCsv(vt_rep),
           escapeCsv(vt_mal),
           escapeCsv(vt_risk),
-          // Wayback
-          escapeCsv(getWaybackCount(result)),
           // Metadata
           escapeCsv(result.timestamp)
         ].join(",");

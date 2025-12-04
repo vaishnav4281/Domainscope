@@ -200,145 +200,145 @@ const LandingPage = () => {
             <div className="relative py-20 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Comprehensive Analysis Suite</h2>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">Comprehensive OSINT Suite</h2>
                         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                            Everything you need for complete domain reconnaissance, from DNS enumeration to threat intelligence.
+                            Advanced reconnaissance tools for complete digital asset monitoring and threat detection.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {/* Feature 1 - DNS Analysis */}
+                        {/* Feature 1 - Extended DNS */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                                 <Globe className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Deep DNS Analysis</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Extended DNS Analysis</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Complete DNS record enumeration with A, AAAA, MX, NS, TXT, and CNAME records plus propagation tracking.
+                                Deep dive into DNS records including MX, TXT, SOA, and CAA. Analyze propagation and configuration.
                             </p>
                             <div className="flex items-center text-sm text-blue-600 dark:text-blue-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Multi-record support</span>
+                                <span>Full record enumeration</span>
                             </div>
                         </div>
 
-                        {/* Feature 2 - Subdomain Discovery */}
-                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                            <div className="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Network className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Subdomain Discovery</h3>
-                            <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Discover all subdomains using Certificate Transparency logs with mobile-optimized performance and retry logic.
-                            </p>
-                            <div className="flex items-center text-sm text-cyan-600 dark:text-cyan-400">
-                                <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Mobile optimized</span>
-                            </div>
-                        </div>
-
-                        {/* Feature 3 - WHOIS Data */}
+                        {/* Feature 2 - Email Security */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <FileSearch className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                                <Shield className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">WHOIS Intelligence</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Email Security</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Extract registrar details, creation dates, expiration info with RDAP fallback for rate-limited queries.
+                                Validate SPF, DKIM, and DMARC configurations to prevent email spoofing and ensure deliverability.
                             </p>
                             <div className="flex items-center text-sm text-indigo-600 dark:text-indigo-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>RDAP fallback</span>
+                                <span>Spoofing prevention</span>
+                            </div>
+                        </div>
+
+                        {/* Feature 3 - SSL/TLS Analysis */}
+                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Lock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">SSL/TLS Intelligence</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                                Analyze certificate chains, cipher suites, and validity. Detect vulnerabilities and misconfigurations.
+                            </p>
+                            <div className="flex items-center text-sm text-amber-600 dark:text-amber-400">
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                <span>Vulnerability detection</span>
                             </div>
                         </div>
 
                         {/* Feature 4 - Threat Intelligence */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Shield className="h-6 w-6 text-red-600 dark:text-red-400" />
+                                <Activity className="h-6 w-6 text-red-600 dark:text-red-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Threat Intelligence</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Advanced Threat Intel</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Real-time threat detection with VirusTotal, AbuseIPDB, and IPQS for comprehensive security scoring.
+                                Integrated with VirusTotal, URLScan, AlienVault OTX, and Google Safe Browsing for maximum coverage.
                             </p>
                             <div className="flex items-center text-sm text-red-600 dark:text-red-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Multi-source verification</span>
+                                <span>Multi-source feeds</span>
                             </div>
                         </div>
 
-                        {/* Feature 5 - Bulk Processing */}
-                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Database className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Bulk Processing</h3>
-                            <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Scan hundreds of domains with intelligent rate limiting and export comprehensive results to CSV format.
-                            </p>
-                            <div className="flex items-center text-sm text-purple-600 dark:text-purple-400">
-                                <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>CSV export included</span>
-                            </div>
-                        </div>
-
-                        {/* Feature 6 - Passive DNS */}
+                        {/* Feature 5 - HTTP Headers */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Activity className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                                <Server className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Passive DNS History</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Header Security</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Track historical infrastructure changes and domain movements across different IP addresses over time.
+                                Analyze HTTP security headers (HSTS, CSP, X-Frame-Options) to ensure best practice implementation.
                             </p>
                             <div className="flex items-center text-sm text-emerald-600 dark:text-emerald-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Historical tracking</span>
+                                <span>Security hardening</span>
                             </div>
                         </div>
 
-                        {/* Feature 7 - Metadata Extraction */}
+                        {/* Feature 6 - Wayback Machine */}
+                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <RefreshCw className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Historical Archives</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                                Access historical snapshots via Wayback Machine to track website changes and evolution over time.
+                            </p>
+                            <div className="flex items-center text-sm text-purple-600 dark:text-purple-400">
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                <span>Time travel analysis</span>
+                            </div>
+                        </div>
+
+                        {/* Feature 7 - Subdomain Discovery */}
+                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            <div className="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Network className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Subdomain Discovery</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                                Discover hidden subdomains using Certificate Transparency logs and passive DNS data.
+                            </p>
+                            <div className="flex items-center text-sm text-cyan-600 dark:text-cyan-400">
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                <span>Attack surface mapping</span>
+                            </div>
+                        </div>
+
+                        {/* Feature 8 - Bulk Processing */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Server className="h-6 w-6 text-pink-600 dark:text-pink-400" />
+                                <Database className="h-6 w-6 text-pink-600 dark:text-pink-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Metadata Extraction</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Bulk Operations</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Extract comprehensive metadata including OpenGraph, Twitter Cards, JSON-LD schemas, and SEO data.
+                                Scan hundreds of domains simultaneously with intelligent rate limiting and CSV export.
                             </p>
                             <div className="flex items-center text-sm text-pink-600 dark:text-pink-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>30+ data points</span>
+                                <span>Mass scaling</span>
                             </div>
                         </div>
 
-                        {/* Feature 8 - SSL/TLS Insights */}
-                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-                            <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Lock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">SSL/TLS Insights</h3>
-                            <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Analyze SSL certificates, expiration dates, and JARM fingerprints to identify security gaps and misconfigurations.
-                            </p>
-                            <div className="flex items-center text-sm text-amber-600 dark:text-amber-400">
-                                <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Certificate analysis</span>
-                            </div>
-                        </div>
-
-                        {/* Feature 9 - Security Features */}
+                        {/* Feature 9 - Metadata & SEO */}
                         <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
                             <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                <Lock className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                                <FileSearch className="h-6 w-6 text-orange-600 dark:text-orange-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Enterprise Security</h3>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Metadata & SEO</h3>
                             <p className="text-slate-600 dark:text-slate-400 mb-4">
-                                Production-ready with rate limiting, secure headers, CORS protection, and comprehensive input validation.
+                                Extract meta tags, OpenGraph data, and technical stack information for competitive analysis.
                             </p>
                             <div className="flex items-center text-sm text-orange-600 dark:text-orange-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
-                                <span>Production hardened</span>
+                                <span>Tech stack reveal</span>
                             </div>
                         </div>
                     </div>
