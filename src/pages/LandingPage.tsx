@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Shield, Globe, Database, Activity, ArrowRight, CheckCircle2, Lock, Zap, Sun, Moon, LayoutDashboard, Menu, LogIn, UserPlus, Network, FileSearch, RefreshCw, Smartphone, Server, TrendingUp } from 'lucide-react';
+import { Shield, Globe, Database, Activity, ArrowRight, CheckCircle2, Lock, Zap, Sun, Moon, LayoutDashboard, Menu, LogIn, UserPlus, Network, FileSearch, RefreshCw, Smartphone, Server, TrendingUp, MapPin, Clock } from 'lucide-react';
 import ThreeBackground from '@/components/ThreeBackground';
 import { useAuth } from '@/context/AuthContext';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -339,6 +339,51 @@ const LandingPage = () => {
                             <div className="flex items-center text-sm text-orange-600 dark:text-orange-400">
                                 <CheckCircle2 className="h-4 w-4 mr-2" />
                                 <span>Tech stack reveal</span>
+                            </div>
+                        </div>
+
+                        {/* Feature 10 - Geolocation Intel */}
+                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <MapPin className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Global Geolocation</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                                Pinpoint server locations, identify hosting providers (ISPs), and map infrastructure globally.
+                            </p>
+                            <div className="flex items-center text-sm text-teal-600 dark:text-teal-400">
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                <span>Physical mapping</span>
+                            </div>
+                        </div>
+
+                        {/* Feature 11 - Smart Rate Limiting */}
+                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            <div className="w-12 h-12 bg-lime-100 dark:bg-lime-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Clock className="h-6 w-6 text-lime-600 dark:text-lime-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Smart Rate Limiting</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                                Intelligent queue management ensures you never hit API limits while maximizing scan speed.
+                            </p>
+                            <div className="flex items-center text-sm text-lime-600 dark:text-lime-400">
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                <span>Zero bans</span>
+                            </div>
+                        </div>
+
+                        {/* Feature 12 - Mobile Optimized */}
+                        <div className="p-8 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
+                            <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                <Smartphone className="h-6 w-6 text-rose-600 dark:text-rose-400" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">Mobile Optimized</h3>
+                            <p className="text-slate-600 dark:text-slate-400 mb-4">
+                                Fully responsive design allows you to run scans and analyze results from any device, anywhere.
+                            </p>
+                            <div className="flex items-center text-sm text-rose-600 dark:text-rose-400">
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                <span>Scan on the go</span>
                             </div>
                         </div>
                     </div>
