@@ -610,7 +610,7 @@ const DomainAnalysisCard = ({
     if (enabledModules.extendedDns && onExtendedDNSResults) {
       void (async () => {
         try {
-          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/extended-dns?domain=${encodeURIComponent(sanitizedDomain)}`, 15000);
+          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/dns-extended?domain=${encodeURIComponent(sanitizedDomain)}`, 15000);
           if (res.ok) {
             const data = await res.json();
             onExtendedDNSResults(data);
@@ -640,7 +640,7 @@ const DomainAnalysisCard = ({
     if (enabledModules.ssl && onSSLResults) {
       void (async () => {
         try {
-          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/ssl?domain=${encodeURIComponent(sanitizedDomain)}`, 20000);
+          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/ssl-cert?domain=${encodeURIComponent(sanitizedDomain)}`, 20000);
           if (res.ok) {
             const data = await res.json();
             onSSLResults(data);
@@ -671,7 +671,7 @@ const DomainAnalysisCard = ({
       // URLScan.io
       void (async () => {
         try {
-          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/urlscan?domain=${encodeURIComponent(sanitizedDomain)}`, 30000);
+          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/urlscan-search?domain=${encodeURIComponent(sanitizedDomain)}`, 30000);
           if (res.ok) {
             const data = await res.json();
             onThreatIntelResults({ urlScan: data });
@@ -684,7 +684,7 @@ const DomainAnalysisCard = ({
       // AlienVault OTX
       void (async () => {
         try {
-          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/otx?domain=${encodeURIComponent(sanitizedDomain)}`, 15000);
+          const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/alienvault-otx?domain=${encodeURIComponent(sanitizedDomain)}`, 15000);
           if (res.ok) {
             const data = await res.json();
             onThreatIntelResults({ otx: data });
