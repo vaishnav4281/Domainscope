@@ -122,3 +122,4 @@ const SSLAnalysisResults: React.FC<SSLAnalysisResultsProps> = ({ results }) => {
 };
 
 export default SSLAnalysisResults;
+
