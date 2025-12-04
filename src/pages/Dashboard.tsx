@@ -481,16 +481,51 @@ const Dashboard = () => {
                                     onMetascraperResults={handleMetascraperResults}
                                     onVirusTotalResults={handleVirusTotalResults}
                                     onSubdomainResults={handleSubdomainResults}
+                                    // New OSINT handlers
+                                    onExtendedDNSResults={handleExtendedDNSResults}
+                                    onEmailSecurityResults={handleEmailSecurityResults}
+                                    onSSLResults={handleSSLResults}
+                                    onHeadersResults={handleHeadersResults}
+                                    onThreatIntelResults={handleThreatIntelResults}
+                                    onWaybackResults={handleWaybackResults}
+
                                     enabledModules={enabledModules}
                                     setEnabledModules={setEnabledModules}
                                 />
                                 {results.length > 0 && (
                                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                                        {/* Priority Cards */}
                                         {enabledModules.core && <ResultsPanel results={results} vtSummaryByDomain={vtSummaryByDomain} />}
                                         {enabledModules.security && <SecurityIntelPanel results={results as any} />}
-                                        {enabledModules.subdomains && <SubdomainResults results={subdomainResults} />}
                                         {enabledModules.virustotal && <VirusTotalResults results={virusTotalResults} />}
+
+                                        {/* Secondary Cards */}
+                                        {enabledModules.subdomains && <SubdomainResults results={subdomainResults} />}
                                         {enabledModules.metadata && <MetascraperResults results={metascraperResults} />}
+
+                                        {/* New OSINT Cards */}
+                                        {enabledModules.extendedDns && extendedDNSResults && (
+                                            <ExtendedDNSResults results={extendedDNSResults} />
+                                        )}
+                                        {enabledModules.emailSecurity && emailSecurityResults && (
+                                            <EmailSecurityResults results={emailSecurityResults} />
+                                        )}
+                                        {enabledModules.ssl && sslResults && (
+                                            <SSLAnalysisResults results={sslResults} />
+                                        )}
+                                        {enabledModules.headers && headersResults && (
+                                            <SecurityHeadersResults results={headersResults} />
+                                        )}
+                                        {enabledModules.threatIntel && (threatIntelResults.safeBrowsing || threatIntelResults.urlScan || threatIntelResults.otx) && (
+                                            <ThreatIntelResults
+                                                safeBrowsing={threatIntelResults.safeBrowsing}
+                                                urlScan={threatIntelResults.urlScan}
+                                                otx={threatIntelResults.otx}
+                                            />
+                                        )}
+                                        {enabledModules.wayback && waybackResults && (
+                                            <WaybackResults results={waybackResults} />
+                                        )}
                                     </div>
                                 )}
                             </div>
