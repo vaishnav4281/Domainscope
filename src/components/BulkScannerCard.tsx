@@ -26,6 +26,14 @@ interface BulkScannerCardProps {
   onMetascraperResults?: (result: any) => void;
   onVirusTotalResults?: (result: any) => void;
   onSubdomainResults?: (result: any) => void;
+  // New OSINT handlers
+  onExtendedDNSResults?: (result: any) => void;
+  onEmailSecurityResults?: (result: any) => void;
+  onSSLResults?: (result: any) => void;
+  onHeadersResults?: (result: any) => void;
+  onThreatIntelResults?: (result: any) => void;
+  onWaybackResults?: (result: any) => void;
+
   onStartScan?: () => void;
   enabledModules: {
     core: boolean;
@@ -33,6 +41,13 @@ interface BulkScannerCardProps {
     subdomains: boolean;
     virustotal: boolean;
     metadata: boolean;
+    // New modules
+    extendedDns: boolean;
+    emailSecurity: boolean;
+    ssl: boolean;
+    headers: boolean;
+    threatIntel: boolean;
+    wayback: boolean;
   };
   setEnabledModules: React.Dispatch<React.SetStateAction<{
     core: boolean;
@@ -40,10 +55,30 @@ interface BulkScannerCardProps {
     subdomains: boolean;
     virustotal: boolean;
     metadata: boolean;
+    extendedDns: boolean;
+    emailSecurity: boolean;
+    ssl: boolean;
+    headers: boolean;
+    threatIntel: boolean;
+    wayback: boolean;
   }>>;
 }
 
-const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults, onSubdomainResults, onStartScan, enabledModules, setEnabledModules }: BulkScannerCardProps) => {
+const BulkScannerCard = ({
+  onResults,
+  onMetascraperResults,
+  onVirusTotalResults,
+  onSubdomainResults,
+  onExtendedDNSResults,
+  onEmailSecurityResults,
+  onSSLResults,
+  onHeadersResults,
+  onThreatIntelResults,
+  onWaybackResults,
+  onStartScan,
+  enabledModules,
+  setEnabledModules
+}: BulkScannerCardProps) => {
   const fetchWithTimeout = async (url: string, timeout = 5000) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -400,6 +435,53 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults,
           } catch (e) {
             onSubdomainResults({ error: 'Subdomain scan timed out or failed' });
           }
+        })() : Promise.resolve(),
+        // NEW OSINT MODULES
+        onExtendedDNSResults && enabledModules.extendedDns ? (async () => {
+          try {
+            const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/dns-extended?domain=${encodeURIComponent(domain)}`, 15000);
+            if (res.ok) onExtendedDNSResults(await res.json());
+          } catch (e) { console.warn('Extended DNS failed:', e); }
+        })() : Promise.resolve(),
+        onEmailSecurityResults && enabledModules.emailSecurity ? (async () => {
+          try {
+            const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/email-security?domain=${encodeURIComponent(domain)}`, 15000);
+            if (res.ok) onEmailSecurityResults(await res.json());
+          } catch (e) { console.warn('Email Security failed:', e); }
+        })() : Promise.resolve(),
+        onSSLResults && enabledModules.ssl ? (async () => {
+          try {
+            const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/ssl-cert?domain=${encodeURIComponent(domain)}`, 20000);
+            if (res.ok) onSSLResults(await res.json());
+          } catch (e) { console.warn('SSL Analysis failed:', e); }
+        })() : Promise.resolve(),
+        onHeadersResults && enabledModules.headers ? (async () => {
+          try {
+            const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/http-headers?domain=${encodeURIComponent(domain)}`, 15000);
+            if (res.ok) onHeadersResults(await res.json());
+          } catch (e) { console.warn('HTTP Headers failed:', e); }
+        })() : Promise.resolve(),
+        onThreatIntelResults && enabledModules.threatIntel ? (async () => {
+          try {
+            const [urlScanRes, otxRes] = await Promise.allSettled([
+              fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/urlscan-search?domain=${encodeURIComponent(domain)}`, 30000),
+              fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/alienvault-otx?domain=${encodeURIComponent(domain)}`, 15000)
+            ]);
+            const results: any = {};
+            if (urlScanRes.status === 'fulfilled' && urlScanRes.value.ok) {
+              results.urlScan = await urlScanRes.value.json();
+            }
+            if (otxRes.status === 'fulfilled' && otxRes.value.ok) {
+              results.otx = await otxRes.value.json();
+            }
+            if (Object.keys(results).length > 0) onThreatIntelResults(results);
+          } catch (e) { console.warn('Threat Intel failed:', e); }
+        })() : Promise.resolve(),
+        onWaybackResults && enabledModules.wayback ? (async () => {
+          try {
+            const res = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/wayback?domain=${encodeURIComponent(domain)}`, 20000);
+            if (res.ok) onWaybackResults(await res.json());
+          } catch (e) { console.warn('Wayback failed:', e); }
         })() : Promise.resolve()
       ]);
     } catch (error: any) {
@@ -517,8 +599,33 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults,
 
         {/* Module Selection */}
         <div className="space-y-3">
-          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Select Modules to Scan</Label>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Select Modules to Scan</Label>
+            <button
+              type="button"
+              onClick={() => {
+                const allChecked = Object.values(enabledModules).every(v => v);
+                const newState = !allChecked;
+                setEnabledModules({
+                  core: newState,
+                  security: newState,
+                  subdomains: newState,
+                  virustotal: newState,
+                  metadata: newState,
+                  extendedDns: newState,
+                  emailSecurity: newState,
+                  ssl: newState,
+                  headers: newState,
+                  threatIntel: newState,
+                  wayback: newState,
+                });
+              }}
+              className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {Object.values(enabledModules).every(v => v) ? 'Uncheck All' : 'Check All'}
+            </button>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <label className="flex items-center space-x-2 cursor-pointer">
               <input
                 type="checkbox"
@@ -563,6 +670,61 @@ const BulkScannerCard = ({ onResults, onMetascraperResults, onVirusTotalResults,
                 className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
               />
               <span className="text-sm text-slate-700 dark:text-slate-300">Metadata</span>
+            </label>
+            {/* New OSINT Modules */}
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enabledModules.extendedDns}
+                onChange={(e) => setEnabledModules(prev => ({ ...prev, extendedDns: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+              />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Extended DNS</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enabledModules.emailSecurity}
+                onChange={(e) => setEnabledModules(prev => ({ ...prev, emailSecurity: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+              />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Email Security</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enabledModules.ssl}
+                onChange={(e) => setEnabledModules(prev => ({ ...prev, ssl: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-green-600 focus:ring-green-500"
+              />
+              <span className="text-sm text-slate-700 dark:text-slate-300">SSL Analysis</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enabledModules.headers}
+                onChange={(e) => setEnabledModules(prev => ({ ...prev, headers: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <span className="text-sm text-slate-700 dark:text-slate-300">HTTP Headers</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enabledModules.threatIntel}
+                onChange={(e) => setEnabledModules(prev => ({ ...prev, threatIntel: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500"
+              />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Threat Intel</span>
+            </label>
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enabledModules.wayback}
+                onChange={(e) => setEnabledModules(prev => ({ ...prev, wayback: e.target.checked }))}
+                className="w-4 h-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+              />
+              <span className="text-sm text-slate-700 dark:text-slate-300">Wayback Machine</span>
             </label>
           </div>
         </div>
