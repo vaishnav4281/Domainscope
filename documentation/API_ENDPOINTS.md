@@ -372,6 +372,47 @@ Subdomain discovery with fallback chain: **crt.sh → HackerTarget → AlienVaul
 
 ---
 
+### GET `/scan/metadata?domain={domain}`
+**Website Metadata Extraction** - Server-side HTML parsing (CORS bypass fallback)
+
+**Purpose:** Fetches website HTML server-side and extracts Open Graph, Twitter Card, and standard meta tags. This endpoint serves as a fallback when frontend CORS proxies fail.
+
+**Response:**
+```json
+{
+  "title": "Example Domain - Welcome",
+  "description": "This domain is for use in illustrative examples in documents.",
+  "keywords": "example, domain, test",
+  "author": "IANA",
+  "lang": "en",
+  "publisher": "Example Inc.",
+  "type": "website",
+  "image": "https://example.com/og-image.png",
+  "imageAlt": "Example domain logo",
+  "url": "https://example.com",
+  "twitterCard": "summary_large_image",
+  "twitterSite": "@example",
+  "favicon": "https://example.com/favicon.ico",
+  "logo": "https://example.com/apple-touch-icon.png",
+  "robots": "index, follow",
+  "viewport": "width=device-width, initial-scale=1",
+  "themeColor": "#ffffff",
+  "charset": "UTF-8",
+  "generator": "WordPress",
+  "schemaType": "Organization",
+  "completenessScore": 73
+}
+```
+
+**Error Response:**
+```json
+{
+  "error": "Failed to fetch website content from all URL variations"
+}
+```
+
+---
+
 ## 📊 History & Management
 
 ### GET `/history`

@@ -32,17 +32,21 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
 
 ### 4. Web Metadata Extraction
 *   **Feature**: Scrapes and parses metadata from the target website (Title, Description, Logo, Social Graph).
-*   **Library**: `metascraper` (NPM Package ecosystem).
-*   **Modules Used**:
-    *   `metascraper-title`
-    *   `metascraper-description`
-    *   `metascraper-image`
-    *   `metascraper-logo`
-    *   `metascraper-date`
-    *   `metascraper-author`
-    *   `metascraper-publisher`
-    *   `metascraper-url`
-    *   `metascraper-lang`
+*   **Implementation**: Dual-path architecture with automatic fallback.
+    *   **Primary Path (Frontend)**: Uses CORS proxies (`cors-proxy.ts`) to fetch website HTML directly from the browser. Races 3 proxies in parallel for speed.
+    *   **Fallback Path (Backend)**: When all CORS proxies fail (common due to rate limits or blocked requests), automatically falls back to `backend/src/services/metadata.ts` which fetches HTML server-side (bypassing CORS entirely).
+*   **Metadata Extracted**:
+    *   `metascraper-title` / `og:title` / `twitter:title`
+    *   `metascraper-description` / `og:description`
+    *   `metascraper-image` / `og:image` / `twitter:image`
+    *   `metascraper-logo` / `apple-touch-icon`
+    *   `metascraper-date` / `article:published_time`
+    *   `metascraper-author` / `article:author`
+    *   `metascraper-publisher` / `og:site_name`
+    *   `metascraper-url` / `og:url` / `canonical`
+    *   `metascraper-lang` / `og:locale`
+    *   JSON-LD structured data parsing
+*   **Key File**: `backend/src/services/metadata.ts` (NEW - Backend fallback service)
 
 ### 5. Subdomain Discovery
 *   **Feature**: Automatically finds all subdomains associated with a target domain using multiple sources.
@@ -146,3 +150,4 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
 | **Google Safe Browsing** | Malware & Phishing Detection | `backend/src/services/google-safe-browsing.ts` |
 | **URLScan.io** | Website Scanning & Screenshots | `backend/src/services/urlscan.ts` |
 | **Wayback Machine** | Historical Snapshots | `backend/src/services/wayback.ts` |
+| **Metadata Extraction** | Website HTML fetching (CORS bypass) | `backend/src/services/metadata.ts` |

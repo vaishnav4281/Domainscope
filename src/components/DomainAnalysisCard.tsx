@@ -414,118 +414,167 @@ const DomainAnalysisCard = ({
       setIsScanning(false); // Data fetching done
     }
 
-    // Kick off Metascraper (Independent)
+    // Kick off Metascraper (Independent) with Backend Fallback
     void (async () => {
       try {
         const targetUrl = `https://${sanitizedDomain}`;
-        const metascraperResponse = await fetchThroughCorsProxy(targetUrl, { timeout: 5000, parallelAttempts: 3 });
-        const html = await metascraperResponse.text();
-        const metaData: any = { id: Date.now() + 1, domain: sanitizedDomain, timestamp: new Date().toLocaleString() };
-        const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-        const ogTitleMatch = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
-        const twitterTitleMatch = html.match(/<meta[^>]*name=["']twitter:title["'][^>]*content=["']([^"']+)["']/i);
-        metaData.title = (ogTitleMatch?.[1] || twitterTitleMatch?.[1] || titleMatch?.[1] || '').trim();
-        const descMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
-        const ogDescMatch = html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i);
-        const twitterDescMatch = html.match(/<meta[^>]*name=["']twitter:description["'][^>]*content=["']([^"']+)["']/i);
-        metaData.description = (ogDescMatch?.[1] || twitterDescMatch?.[1] || descMatch?.[1] || '').trim();
-        const keywordsMatch = html.match(/<meta[^>]*name=["']keywords["'][^>]*content=["']([^"']+)["']/i);
-        if (keywordsMatch) metaData.keywords = keywordsMatch[1].trim();
-        const authorMatch = html.match(/<meta[^>]*name=["']author["'][^>]*content=["']([^"']+)["']/i);
-        const articleAuthorMatch = html.match(/<meta[^>]*property=["']article:author["'][^>]*content=["']([^"']+)["']/i);
-        if (authorMatch || articleAuthorMatch) metaData.author = (articleAuthorMatch?.[1] || authorMatch?.[1] || '').trim();
-        const langMatch = html.match(/<html[^>]*lang=["']([^"']+)["']/i);
-        const ogLocaleMatch = html.match(/<meta[^>]*property=["']og:locale["'][^>]*content=["']([^"']+)["']/i);
-        if (langMatch || ogLocaleMatch) metaData.lang = (langMatch?.[1] || ogLocaleMatch?.[1] || '').trim();
-        const publisherMatch = html.match(/<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']+)["']/i);
-        if (publisherMatch) metaData.publisher = publisherMatch[1].trim();
-        const ogTypeMatch = html.match(/<meta[^>]*property=["']og:type["'][^>]*content=["']([^"']+)["']/i);
-        if (ogTypeMatch) metaData.type = ogTypeMatch[1].trim();
-        const imageMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i);
-        const twitterImageMatch = html.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
-        if (imageMatch || twitterImageMatch) metaData.image = (imageMatch?.[1] || twitterImageMatch?.[1] || '').trim();
-        const imageAltMatch = html.match(/<meta[^>]*property=["']og:image:alt["'][^>]*content=["']([^"']+)["']/i);
-        if (imageAltMatch) metaData.imageAlt = imageAltMatch[1].trim();
-        const ogUrlMatch = html.match(/<meta[^>]*property=["']og:url["'][^>]*content=["']([^"']+)["']/i);
-        const canonicalMatch = html.match(/<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["']/i);
-        metaData.url = (ogUrlMatch?.[1] || canonicalMatch?.[1] || targetUrl).trim();
-        const twitterCardMatch = html.match(/<meta[^>]*name=["']twitter:card["'][^>]*content=["']([^"']+)["']/i);
-        if (twitterCardMatch) metaData.twitterCard = twitterCardMatch[1].trim();
-        const twitterSiteMatch = html.match(/<meta[^>]*name=["']twitter:site["'][^>]*content=["']([^"']+)["']/i);
-        if (twitterSiteMatch) metaData.twitterSite = twitterSiteMatch[1].trim();
-        const twitterCreatorMatch = html.match(/<meta[^>]*name=["']twitter:creator["'][^>]*content=["']([^"']+)["']/i);
-        if (twitterCreatorMatch) metaData.twitterCreator = twitterCreatorMatch[1].trim();
-        const publishedMatch = html.match(/<meta[^>]*property=["']article:published_time["'][^>]*content=["']([^"']+)["']/i);
-        const dateMatch = html.match(/<meta[^>]*name=["']date["'][^>]*content=["']([^"']+)["']/i);
-        if (publishedMatch || dateMatch) metaData.date = (publishedMatch?.[1] || dateMatch?.[1] || '').trim();
-        const modifiedMatch = html.match(/<meta[^>]*property=["']article:modified_time["'][^>]*content=["']([^"']+)["']/i);
-        if (modifiedMatch) metaData.modifiedDate = modifiedMatch[1].trim();
-        const sectionMatch = html.match(/<meta[^>]*property=["']article:section["'][^>]*content=["']([^"']+)["']/i);
-        if (sectionMatch) metaData.category = sectionMatch[1].trim();
-        const articleTagsMatches = html.match(/<meta[^>]*property=["']article:tag["'][^>]*content=["']([^"']+)["']/gi);
-        if (articleTagsMatches) {
-          metaData.tags = articleTagsMatches.map((tag: string) => {
-            const match = tag.match(/content=["']([^"']+)["']/i);
-            return match ? match[1] : '';
-          }).filter(Boolean).join(', ');
-        }
-        const faviconMatch = html.match(/<link[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["']/i);
-        if (faviconMatch) {
-          const faviconUrl = faviconMatch[1].trim();
-          metaData.favicon = faviconUrl.startsWith('http') ? faviconUrl : `https://${sanitizedDomain}${faviconUrl.startsWith('/') ? '' : '/'}${faviconUrl}`;
-        }
+        let html: string | null = null;
+        let usedBackendFallback = false;
 
-        const appleTouchMatch = html.match(/<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/i);
-        if (appleTouchMatch) {
-          const appleUrl = appleTouchMatch[1].trim();
-          metaData.logo = appleUrl.startsWith('http') ? appleUrl : `https://${sanitizedDomain}${appleUrl.startsWith('/') ? '' : '/'}${appleUrl}`;
-        }
-        const robotsMatch = html.match(/<meta[^>]*name=["']robots["'][^>]*content=["']([^"']+)["']/i);
-        if (robotsMatch) metaData.robots = robotsMatch[1].trim();
-        const viewportMatch = html.match(/<meta[^>]*name=["']viewport["'][^>]*content=["']([^"']+)["']/i);
-        if (viewportMatch) metaData.viewport = viewportMatch[1].trim();
-        const themeColorMatch = html.match(/<meta[^>]*name=["']theme-color["'][^>]*content=["']([^"']+)["']/i);
-        if (themeColorMatch) metaData.themeColor = themeColorMatch[1].trim();
-        const charsetMatch = html.match(/<meta[^>]*charset=["']?([^"'\s>]+)["']?/i);
-        if (charsetMatch) metaData.charset = charsetMatch[1].trim();
-        const generatorMatch = html.match(/<meta[^>]*name=["']generator["'][^>]*content=["']([^"']+)["']/i);
-        if (generatorMatch) metaData.generator = generatorMatch[1].trim();
-        const rssFeedMatch = html.match(/<link[^>]*type=["']application\/rss\+xml["'][^>]*href=["']([^"']+)["']/i);
-        if (rssFeedMatch) {
-          const rssUrl = rssFeedMatch[1].trim();
-          metaData.rssFeed = rssUrl.startsWith('http') ? rssUrl : `https://${sanitizedDomain}${rssUrl.startsWith('/') ? '' : '/'}${rssUrl}`;
-        }
-        const atomFeedMatch = html.match(/<link[^>]*type=["']application\/atom\+xml["'][^>]*href=["']([^"']+)["']/i);
-        if (atomFeedMatch) {
-          const atomUrl = atomFeedMatch[1].trim();
-          metaData.atomFeed = atomUrl.startsWith('http') ? atomUrl : `https://${sanitizedDomain}${atomUrl.startsWith('/') ? '' : '/'}${atomUrl}`;
-        }
-        // JSON-LD
-        const jsonLdMatches = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
-        if (jsonLdMatches) {
+        // Try CORS proxies first
+        try {
+          const metascraperResponse = await fetchThroughCorsProxy(targetUrl, { timeout: 5000, parallelAttempts: 3 });
+          html = await metascraperResponse.text();
+          console.log('✅ Metascraper: CORS proxy succeeded');
+        } catch (corsError: any) {
+          console.warn('⚠️ Metascraper: All CORS proxies failed, trying backend fallback...', corsError.message);
+
+          // Fallback to backend metadata extraction
           try {
-            const jsonLdData = jsonLdMatches.map(script => {
-              const content = script.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
-              if (content && content[1]) {
-                try { return JSON.parse(content[1]); } catch { return null; }
-              }
-              return null;
-            }).filter(Boolean);
-            if (jsonLdData.length > 0) {
-              metaData.jsonLd = jsonLdData;
-              const firstSchema = Array.isArray(jsonLdData[0]) ? jsonLdData[0][0] : jsonLdData[0];
-              if (firstSchema) {
-                if (firstSchema['@type']) metaData.schemaType = firstSchema['@type'];
-                if (firstSchema.name && !metaData.title) metaData.title = firstSchema.name;
-                if (firstSchema.description && !metaData.description) metaData.description = firstSchema.description;
+            const backendRes = await fetchWithTimeout(`${API_BASE_URL}/api/v1/scan/metadata?domain=${encodeURIComponent(sanitizedDomain)}`, 15000);
+            if (backendRes.ok) {
+              const backendData = await backendRes.json();
+
+              // Check if backend returned valid data (not just an error)
+              if (!backendData.error) {
+                console.log('✅ Metascraper: Backend fallback succeeded');
+                usedBackendFallback = true;
+
+                // Convert backend data to frontend format
+                const metaData: any = {
+                  id: Date.now() + 1,
+                  domain: sanitizedDomain,
+                  timestamp: new Date().toLocaleString(),
+                  ...backendData,
+                  source: 'backend' // Mark that this came from backend
+                };
+
+                onMetascraperResults(metaData);
+                return; // Exit early since we got data from backend
+              } else {
+                console.warn('⚠️ Metascraper: Backend returned error:', backendData.error);
               }
             }
-          } catch (e) { /* ignore */ }
+          } catch (backendErr) {
+            console.warn('⚠️ Metascraper: Backend fallback also failed:', backendErr);
+          }
+
+          // If both CORS and backend failed, show error
+          if (!usedBackendFallback) {
+            throw corsError; // Re-throw original CORS error
+          }
         }
-        const totalFields = 30;
-        const filledFields = Object.keys(metaData).filter(key => key !== 'id' && key !== 'domain' && key !== 'timestamp' && key !== 'jsonLd' && metaData[key]).length;
-        metaData.completenessScore = Math.round((filledFields / totalFields) * 100);
-        onMetascraperResults(metaData);
+
+        // If we got HTML from CORS proxy, parse it
+        if (html && !usedBackendFallback) {
+          const metaData: any = { id: Date.now() + 1, domain: sanitizedDomain, timestamp: new Date().toLocaleString() };
+          const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+          const ogTitleMatch = html.match(/<meta[^>]*property=["']og:title["'][^>]*content=["']([^"']+)["']/i);
+          const twitterTitleMatch = html.match(/<meta[^>]*name=["']twitter:title["'][^>]*content=["']([^"']+)["']/i);
+          metaData.title = (ogTitleMatch?.[1] || twitterTitleMatch?.[1] || titleMatch?.[1] || '').trim();
+          const descMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i);
+          const ogDescMatch = html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i);
+          const twitterDescMatch = html.match(/<meta[^>]*name=["']twitter:description["'][^>]*content=["']([^"']+)["']/i);
+          metaData.description = (ogDescMatch?.[1] || twitterDescMatch?.[1] || descMatch?.[1] || '').trim();
+          const keywordsMatch = html.match(/<meta[^>]*name=["']keywords["'][^>]*content=["']([^"']+)["']/i);
+          if (keywordsMatch) metaData.keywords = keywordsMatch[1].trim();
+          const authorMatch = html.match(/<meta[^>]*name=["']author["'][^>]*content=["']([^"']+)["']/i);
+          const articleAuthorMatch = html.match(/<meta[^>]*property=["']article:author["'][^>]*content=["']([^"']+)["']/i);
+          if (authorMatch || articleAuthorMatch) metaData.author = (articleAuthorMatch?.[1] || authorMatch?.[1] || '').trim();
+          const langMatch = html.match(/<html[^>]*lang=["']([^"']+)["']/i);
+          const ogLocaleMatch = html.match(/<meta[^>]*property=["']og:locale["'][^>]*content=["']([^"']+)["']/i);
+          if (langMatch || ogLocaleMatch) metaData.lang = (langMatch?.[1] || ogLocaleMatch?.[1] || '').trim();
+          const publisherMatch = html.match(/<meta[^>]*property=["']og:site_name["'][^>]*content=["']([^"']+)["']/i);
+          if (publisherMatch) metaData.publisher = publisherMatch[1].trim();
+          const ogTypeMatch = html.match(/<meta[^>]*property=["']og:type["'][^>]*content=["']([^"']+)["']/i);
+          if (ogTypeMatch) metaData.type = ogTypeMatch[1].trim();
+          const imageMatch = html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i);
+          const twitterImageMatch = html.match(/<meta[^>]*name=["']twitter:image["'][^>]*content=["']([^"']+)["']/i);
+          if (imageMatch || twitterImageMatch) metaData.image = (imageMatch?.[1] || twitterImageMatch?.[1] || '').trim();
+          const imageAltMatch = html.match(/<meta[^>]*property=["']og:image:alt["'][^>]*content=["']([^"']+)["']/i);
+          if (imageAltMatch) metaData.imageAlt = imageAltMatch[1].trim();
+          const ogUrlMatch = html.match(/<meta[^>]*property=["']og:url["'][^>]*content=["']([^"']+)["']/i);
+          const canonicalMatch = html.match(/<link[^>]*rel=["']canonical["'][^>]*href=["']([^"']+)["']/i);
+          metaData.url = (ogUrlMatch?.[1] || canonicalMatch?.[1] || targetUrl).trim();
+          const twitterCardMatch = html.match(/<meta[^>]*name=["']twitter:card["'][^>]*content=["']([^"']+)["']/i);
+          if (twitterCardMatch) metaData.twitterCard = twitterCardMatch[1].trim();
+          const twitterSiteMatch = html.match(/<meta[^>]*name=["']twitter:site["'][^>]*content=["']([^"']+)["']/i);
+          if (twitterSiteMatch) metaData.twitterSite = twitterSiteMatch[1].trim();
+          const twitterCreatorMatch = html.match(/<meta[^>]*name=["']twitter:creator["'][^>]*content=["']([^"']+)["']/i);
+          if (twitterCreatorMatch) metaData.twitterCreator = twitterCreatorMatch[1].trim();
+          const publishedMatch = html.match(/<meta[^>]*property=["']article:published_time["'][^>]*content=["']([^"']+)["']/i);
+          const dateMatch = html.match(/<meta[^>]*name=["']date["'][^>]*content=["']([^"']+)["']/i);
+          if (publishedMatch || dateMatch) metaData.date = (publishedMatch?.[1] || dateMatch?.[1] || '').trim();
+          const modifiedMatch = html.match(/<meta[^>]*property=["']article:modified_time["'][^>]*content=["']([^"']+)["']/i);
+          if (modifiedMatch) metaData.modifiedDate = modifiedMatch[1].trim();
+          const sectionMatch = html.match(/<meta[^>]*property=["']article:section["'][^>]*content=["']([^"']+)["']/i);
+          if (sectionMatch) metaData.category = sectionMatch[1].trim();
+          const articleTagsMatches = html.match(/<meta[^>]*property=["']article:tag["'][^>]*content=["']([^"']+)["']/gi);
+          if (articleTagsMatches) {
+            metaData.tags = articleTagsMatches.map((tag: string) => {
+              const match = tag.match(/content=["']([^"']+)["']/i);
+              return match ? match[1] : '';
+            }).filter(Boolean).join(', ');
+          }
+          const faviconMatch = html.match(/<link[^>]*rel=["'](?:icon|shortcut icon)["'][^>]*href=["']([^"']+)["']/i);
+          if (faviconMatch) {
+            const faviconUrl = faviconMatch[1].trim();
+            metaData.favicon = faviconUrl.startsWith('http') ? faviconUrl : `https://${sanitizedDomain}${faviconUrl.startsWith('/') ? '' : '/'}${faviconUrl}`;
+          }
+
+          const appleTouchMatch = html.match(/<link[^>]*rel=["']apple-touch-icon["'][^>]*href=["']([^"']+)["']/i);
+          if (appleTouchMatch) {
+            const appleUrl = appleTouchMatch[1].trim();
+            metaData.logo = appleUrl.startsWith('http') ? appleUrl : `https://${sanitizedDomain}${appleUrl.startsWith('/') ? '' : '/'}${appleUrl}`;
+          }
+          const robotsMatch = html.match(/<meta[^>]*name=["']robots["'][^>]*content=["']([^"']+)["']/i);
+          if (robotsMatch) metaData.robots = robotsMatch[1].trim();
+          const viewportMatch = html.match(/<meta[^>]*name=["']viewport["'][^>]*content=["']([^"']+)["']/i);
+          if (viewportMatch) metaData.viewport = viewportMatch[1].trim();
+          const themeColorMatch = html.match(/<meta[^>]*name=["']theme-color["'][^>]*content=["']([^"']+)["']/i);
+          if (themeColorMatch) metaData.themeColor = themeColorMatch[1].trim();
+          const charsetMatch = html.match(/<meta[^>]*charset=["']?([^"'\s>]+)["']?/i);
+          if (charsetMatch) metaData.charset = charsetMatch[1].trim();
+          const generatorMatch = html.match(/<meta[^>]*name=["']generator["'][^>]*content=["']([^"']+)["']/i);
+          if (generatorMatch) metaData.generator = generatorMatch[1].trim();
+          const rssFeedMatch = html.match(/<link[^>]*type=["']application\/rss\+xml["'][^>]*href=["']([^"']+)["']/i);
+          if (rssFeedMatch) {
+            const rssUrl = rssFeedMatch[1].trim();
+            metaData.rssFeed = rssUrl.startsWith('http') ? rssUrl : `https://${sanitizedDomain}${rssUrl.startsWith('/') ? '' : '/'}${rssUrl}`;
+          }
+          const atomFeedMatch = html.match(/<link[^>]*type=["']application\/atom\+xml["'][^>]*href=["']([^"']+)["']/i);
+          if (atomFeedMatch) {
+            const atomUrl = atomFeedMatch[1].trim();
+            metaData.atomFeed = atomUrl.startsWith('http') ? atomUrl : `https://${sanitizedDomain}${atomUrl.startsWith('/') ? '' : '/'}${atomUrl}`;
+          }
+          // JSON-LD
+          const jsonLdMatches = html.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+          if (jsonLdMatches) {
+            try {
+              const jsonLdData = jsonLdMatches.map(script => {
+                const content = script.match(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/i);
+                if (content && content[1]) {
+                  try { return JSON.parse(content[1]); } catch { return null; }
+                }
+                return null;
+              }).filter(Boolean);
+              if (jsonLdData.length > 0) {
+                metaData.jsonLd = jsonLdData;
+                const firstSchema = Array.isArray(jsonLdData[0]) ? jsonLdData[0][0] : jsonLdData[0];
+                if (firstSchema) {
+                  if (firstSchema['@type']) metaData.schemaType = firstSchema['@type'];
+                  if (firstSchema.name && !metaData.title) metaData.title = firstSchema.name;
+                  if (firstSchema.description && !metaData.description) metaData.description = firstSchema.description;
+                }
+              }
+            } catch (e) { /* ignore */ }
+          }
+          const totalFields = 30;
+          const filledFields = Object.keys(metaData).filter(key => key !== 'id' && key !== 'domain' && key !== 'timestamp' && key !== 'jsonLd' && metaData[key]).length;
+          metaData.completenessScore = Math.round((filledFields / totalFields) * 100);
+          metaData.source = 'cors_proxy'; // Mark that this came from CORS proxy
+          onMetascraperResults(metaData);
+        }
       } catch (metaError: any) {
         console.warn('Metascraper error:', metaError);
         const errorMessage = metaError.name === 'AbortError'

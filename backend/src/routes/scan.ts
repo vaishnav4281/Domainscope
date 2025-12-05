@@ -21,6 +21,7 @@ import { checkGoogleSafeBrowsing } from '../services/google-safe-browsing.js';
 import { checkURLScan, searchURLScan } from '../services/urlscan.js';
 import { checkAlienVaultOTX } from '../services/alienvault-otx.js';
 import { getWaybackSnapshots } from '../services/wayback.js';
+import { extractWebsiteMetadata } from '../services/metadata.js';
 
 const router = express.Router();
 
@@ -205,6 +206,21 @@ router.get('/wayback', async (req, res) => {
     }
     const result = await getWaybackSnapshots(domain);
     res.json(result);
+});
+
+// Website Metadata Extraction (Fallback when CORS proxies fail)
+router.get('/metadata', async (req, res) => {
+    const { domain } = req.query;
+    if (!domain || typeof domain !== 'string') {
+        return res.status(400).json({ error: 'Missing domain parameter' });
+    }
+    try {
+        const result = await extractWebsiteMetadata(domain);
+        res.json(result);
+    } catch (error: any) {
+        console.error('[Metadata] Error:', error.message);
+        res.status(500).json({ error: 'Failed to extract metadata' });
+    }
 });
 
 router.post('/full', authenticateToken, async (req: AuthRequest, res) => {

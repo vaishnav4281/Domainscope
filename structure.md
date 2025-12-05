@@ -138,6 +138,7 @@ Business logic and external API integrations.
 | **`urlscan.ts`** | **NEW** Integration with URLScan.io for website scanning. |
 | **`alienvault-otx.ts`** | **NEW** Fetches threat intelligence from AlienVault OTX. |
 | **`wayback.ts`** | **NEW** Retrieves historical snapshots from the Wayback Machine. |
+| **`metadata.ts`** | **NEW** Server-side website metadata extraction. Serves as a CORS-bypass fallback when frontend proxies fail. |
 
 ### Middleware (`/backend/src/middleware`)
 Express middleware functions.
