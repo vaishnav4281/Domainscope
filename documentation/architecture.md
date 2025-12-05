@@ -43,8 +43,10 @@ graph TD
         VT["🦠 VirusTotal API"]:::ext
         WHOIS["📜 WHOIS Servers"]:::ext
         IPInfo["🕵️ IPInfo"]:::ext
+        IP2Loc["📍 IP2Location"]:::ext
         DNS["🗺️ DNS Resolvers"]:::ext
         CRT["🔍 crt.sh (Subdomains)"]:::ext
+        HT["🎯 HackerTarget"]:::ext
         PC["🛡️ ProxyCheck.io"]:::ext
         GSB["🚫 Google Safe Browsing"]:::ext
         URLS["📸 URLScan.io"]:::ext
@@ -97,7 +99,7 @@ graph TD
 *   **Technology**: Node.js, BullMQ (Redis-based queues).
 *   **Responsibility**:
     *   Executes long-running tasks asynchronously.
-    *   Fetches data from multiple external sources (WHOIS, DNS, Threat Intel, ProxyCheck, Subdomains, Safe Browsing, OTX) in parallel.
+    *   Fetches data from multiple external sources (WHOIS, DNS, Threat Intel, ProxyCheck, IP2Location, Subdomains, HackerTarget, Safe Browsing, OTX) in parallel.
     *   Aggregates results and updates the database.
     *   Handles retries and failures (Dead Letter Queues).
 

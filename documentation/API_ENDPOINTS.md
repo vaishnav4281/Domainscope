@@ -65,7 +65,9 @@ WHOIS lookup with RDAP fallback.
 VirusTotal domain report.
 
 ### GET `/scan/ipqs?ip={ip}`
-ProxyCheck VPN/Proxy detection.
+IP Intelligence with fallback chain: **IPInfo → ProxyCheck.io → IP2Location.io**
+
+**Returns:** VPN/Proxy detection, geolocation, ISP, fraud score.
 
 ### GET `/scan/abuseipdb?ip={ip}`
 AbuseIPDB threat intelligence.
@@ -74,7 +76,17 @@ AbuseIPDB threat intelligence.
 DNSBL blacklist checks.
 
 ### GET `/scan/subdomain?domain={domain}`
-Certificate Transparency subdomain discovery.
+Subdomain discovery with fallback chain: **crt.sh → HackerTarget → AlienVault OTX**
+
+**Response:**
+```json
+{
+  "subdomains": ["api.example.com", "mail.example.com"],
+  "count": 2,
+  "sources": ["crt.sh", "HackerTarget"],
+  "timestamp": "2025-12-05T..."
+}
+```
 
 ---
 
@@ -462,5 +474,5 @@ Public endpoints (no auth required):
 
 ---
 
-**Last Updated:** 2025-12-04  
-**API Version:** v1.1
+**Last Updated:** 2025-12-05  
+**API Version:** v1.2 (with fallback chains)

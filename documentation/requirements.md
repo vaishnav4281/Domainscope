@@ -80,14 +80,16 @@ The application needs to connect to external APIs for intelligence gathering. Pl
 | :--- | :--- | :--- |
 | `virustotal.com` | 443 | VirusTotal API |
 | `abuseipdb.com` | 443 | AbuseIPDB API |
-| `crt.sh` | 443 | Certificate Transparency Logs (Subdomains) |
+| `crt.sh` | 443 | Certificate Transparency Logs (Subdomains - Primary) |
+| `api.hackertarget.com` | 443 | HackerTarget API (Subdomains - Fallback) |
+| `ipinfo.io` | 443 | IPInfo API (IP Intelligence - Primary) |
 | `whois.iana.org` | 43 | WHOIS Lookups |
-| `proxycheck.io` | 80/443 | Proxy/VPN Detection API |
+| `proxycheck.io` | 80/443 | Proxy/VPN Detection API (Fallback 1) |
+| `api.ip2location.io` | 443 | IP2Location Geolocation API (Fallback 2) |
 | `safebrowsing.googleapis.com` | 443 | Google Safe Browsing API (Malware/Phishing) |
 | `urlscan.io` | 443 | URLScan.io Website Scanner |
-| `otx.alienvault.com` | 443 | AlienVault OTX Threat Intelligence |
+| `otx.alienvault.com` | 443 | AlienVault OTX (Threat Intel + Subdomain Fallback) |
 | `web.archive.org` | 443 | Wayback Machine (Internet Archive) |
-| `api.ip2location.io` | 443 | IP2Location Geolocation API |
 | `*` (Wildcard) | 53 (UDP/TCP) | DNS Resolution (Google 8.8.8.8 / Cloudflare 1.1.1.1) |
 | `*` (Wildcard) | 43 (TCP) | WHOIS Servers (Various TLDs) |
 

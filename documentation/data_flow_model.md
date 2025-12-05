@@ -30,11 +30,12 @@ This document describes the flow of data through the DomainScope system, from us
     *   Backend returns a "Job ID" to the Frontend to poll for status.
 5.  **Processing (Worker Layer)**:
     *   Worker picks up the job.
-    *   **Parallel Fetching**:
+    *   **Parallel Fetching** (with fallback chains):
         *   **WHOIS**: Queries Port 43 or RDAP endpoints.
         *   **DNS**: Queries public DNS resolvers (Google/Cloudflare).
-        *   **Subdomains**: Queries crt.sh for certificate logs.
-        *   **Threat Intel**: Calls VirusTotal, IPInfo, ProxyCheck.io, AbuseIPDB, Google Safe Browsing, URLScan.io, AlienVault OTX.
+        *   **Subdomains**: crt.sh → HackerTarget → AlienVault OTX (fallback chain).
+        *   **IP Intelligence**: IPInfo → ProxyCheck.io → IP2Location.io (fallback chain).
+        *   **Threat Intel**: VirusTotal, AbuseIPDB, Google Safe Browsing, URLScan.io, AlienVault OTX.
         *   **Security Analysis**: Checks SSL Certificates, HTTP Headers, Email Security (SPF/DKIM/DMARC).
         *   **Historical**: Queries Wayback Machine.
     *   **Aggregation**: Results are combined into a standardized JSON format.
