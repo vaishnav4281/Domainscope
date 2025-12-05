@@ -14,8 +14,16 @@ const PROXYCHECK_KEYS = [
     process.env.PROXYCHECK_API_KEY_3
 ].filter(Boolean) as string[];
 
+// Initialize IP2Location keys
+const IP2LOCATION_KEYS = [
+    process.env.IP2LOCATION_API_KEY,
+    process.env.IP2LOCATION_API_KEY_2,
+    process.env.IP2LOCATION_API_KEY_3
+].filter(Boolean) as string[];
+
 let currentIpInfoIndex = 0;
 let currentProxyCheckIndex = 0;
+let currentIp2LocationIndex = 0;
 
 const getNextIpInfoToken = () => {
     if (IPINFO_TOKENS.length === 0) return null;
@@ -28,6 +36,13 @@ const getNextProxyCheckKey = () => {
     if (PROXYCHECK_KEYS.length === 0) return null;
     const key = PROXYCHECK_KEYS[currentProxyCheckIndex];
     currentProxyCheckIndex = (currentProxyCheckIndex + 1) % PROXYCHECK_KEYS.length;
+    return key;
+};
+
+const getNextIp2LocationKey = () => {
+    if (IP2LOCATION_KEYS.length === 0) return null;
+    const key = IP2LOCATION_KEYS[currentIp2LocationIndex];
+    currentIp2LocationIndex = (currentIp2LocationIndex + 1) % IP2LOCATION_KEYS.length;
     return key;
 };
 
@@ -156,9 +171,69 @@ export async function checkIPQS(ip: string) {
         }
     }
 
+    // 3. Fallback to IP2Location.io REST API if result is still missing or incomplete
+    const needsIp2Location = !result || !result.country_code || !result.ISP;
+
+    if (needsIp2Location && IP2LOCATION_KEYS.length > 0) {
+        console.log(`[IP2Location] Fallback for IP: ${ip}`);
+
+        for (let i = 0; i < IP2LOCATION_KEYS.length; i++) {
+            const apiKey = getNextIp2LocationKey();
+            if (!apiKey) continue;
+
+            try {
+                // Use IP2Location.io REST API directly (more reliable than npm package)
+                const ip2locUrl = `https://api.ip2location.io/?key=${apiKey}&ip=${encodeURIComponent(ip)}`;
+                const response = await fetch(ip2locUrl);
+                const data = await response.json() as any;
+
+                if (data && !data.error) {
+                    console.log(`[IP2Location] Data found for ${ip}`);
+
+                    if (!result) {
+                        // Build new result from IP2Location
+                        result = {
+                            fraud_score: data.is_proxy ? 75 : 0,
+                            vpn: false, // IP2Location free tier doesn't have VPN detection
+                            proxy: data.is_proxy || false,
+                            tor: false,
+                            country_code: data.country_code || null,
+                            region: data.region_name || null,
+                            city: data.city_name || null,
+                            latitude: data.latitude || null,
+                            longitude: data.longitude || null,
+                            ISP: data.isp || data.as_name || null,
+                            organization: data.as_name || null
+                        };
+                    } else {
+                        // Fill in missing fields from IP2Location
+                        if (!result.country_code && data.country_code) result.country_code = data.country_code;
+                        if (!result.region && data.region_name) result.region = data.region_name;
+                        if (!result.city && data.city_name) result.city = data.city_name;
+                        if (!result.latitude && data.latitude) result.latitude = data.latitude;
+                        if (!result.longitude && data.longitude) result.longitude = data.longitude;
+                        if (!result.ISP && (data.isp || data.as_name)) result.ISP = data.isp || data.as_name;
+                        if (!result.organization && data.as_name) result.organization = data.as_name;
+                        if (data.is_proxy && !result.proxy) {
+                            result.proxy = true;
+                            result.fraud_score = Math.max(result.fraud_score || 0, 75);
+                        }
+                    }
+                    break; // Success
+                } else if (data.error) {
+                    console.warn(`[IP2Location] API Error: ${data.error.error_message || data.error}`);
+                }
+            } catch (error: any) {
+                console.error(`[IP2Location] Request error with key ${i + 1}:`, error.message);
+                // Try next key
+            }
+        }
+    }
+
     if (!result) {
-        console.error('[IPQS] All providers failed');
+        console.error('[IPQS] All providers failed (IPInfo, ProxyCheck, IP2Location)');
     }
 
     return result;
 }
+
