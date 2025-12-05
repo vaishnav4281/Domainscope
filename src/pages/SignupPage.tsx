@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SEO from '@/components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,6 @@ import ThreeBackground from '@/components/ThreeBackground';
 
 import Footer from '@/components/Footer';
 
-// ... existing imports
 
 export default function SignupPage() {
     const [email, setEmail] = useState('');
@@ -24,6 +24,7 @@ export default function SignupPage() {
     const [showDelayedMessage, setShowDelayedMessage] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+
 
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
@@ -99,6 +100,10 @@ export default function SignupPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col relative overflow-hidden transition-colors duration-300">
+            <SEO
+                title="Sign Up"
+                description="Create your DomainScope account. Start analyzing domains with advanced OSINT tools."
+            />
             <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
                 {/* Three.js particle background */}
                 <ThreeBackground />

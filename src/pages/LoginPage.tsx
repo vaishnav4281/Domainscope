@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import SEO from '@/components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,6 @@ import ThreeBackground from '@/components/ThreeBackground';
 
 import Footer from '@/components/Footer';
 
-// ... existing imports
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -23,6 +23,7 @@ export default function LoginPage() {
     const [showDelayedMessage, setShowDelayedMessage] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+
 
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
@@ -69,7 +70,13 @@ export default function LoginPage() {
                 toast.success('Welcome back!');
                 navigate('/dashboard');
             } else {
-                toast.error(data.error || 'Login failed');
+                if (data.error === 'Email not verified') {
+                    setUnverifiedEmail(email);
+                    setShowOTPModal(true);
+                    toast.error('Please verify your email first');
+                } else {
+                    toast.error(data.error || 'Login failed');
+                }
             }
         } catch (error: any) {
             if (error.message === 'timeout') {
@@ -97,6 +104,10 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex flex-col relative overflow-hidden text-slate-900 dark:text-white transition-colors duration-300">
+            <SEO
+                title="Login"
+                description="Secure login for DomainScope. Access your advanced domain intelligence dashboard."
+            />
             <div className="min-h-screen flex items-center justify-center p-4 relative z-10">
                 {/* Three.js particle background */}
                 <ThreeBackground />

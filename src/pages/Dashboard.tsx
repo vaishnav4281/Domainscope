@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import SEO from '@/components/SEO';
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -95,6 +96,7 @@ const Dashboard = () => {
         threatIntel: true,
         wayback: true
     });
+
 
     // Theme Toggle
     useEffect(() => {
@@ -256,6 +258,10 @@ const Dashboard = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-slate-50 font-sans transition-colors duration-300 flex flex-col">
+            <SEO
+                title="Dashboard"
+                description="Manage your domain scans, view history, and analyze security intelligence data."
+            />
 
             {/* Top Navigation Bar */}
             <nav className="sticky top-0 z-50 w-full border-b border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">

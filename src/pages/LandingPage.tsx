@@ -8,12 +8,18 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import Footer from '@/components/Footer';
 
+import SEO from '@/components/SEO';
+
 const LandingPage = () => {
     const { isAuthenticated } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors duration-300 relative overflow-hidden font-sans flex flex-col">
+            <SEO
+                title="DomainScope"
+                description="Advanced domain intelligence platform built by an expert Software Engineer. Features WHOIS, DNS, Threat Intel, and more."
+            />
             {/* Three.js 3D Background */}
             <ThreeBackground />
 

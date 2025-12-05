@@ -180,6 +180,7 @@ Performance:              →  Performance:            →  Performance:
 - **Build Tool**: Vite 5.x (HMR <50ms)
 - **Styling**: TailwindCSS 3.x + Radix UI
 - **State**: React Context + React Query
+- **SEO**: react-helmet-async (Dynamic meta tags, Open Graph, Twitter Cards)
 
 ---
 

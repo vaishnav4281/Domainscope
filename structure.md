@@ -57,22 +57,24 @@ The frontend is built with React, TypeScript, and Tailwind CSS.
 ### Core Files
 | File | Description |
 | :--- | :--- |
-| **`main.tsx`** | The entry point of the React application. Mounts the app to the DOM. |
+| **`main.tsx`** | The entry point of the React application. Mounts the app to the DOM and wraps it with HelmetProvider for SEO. |
 | **`App.tsx`** | The main component that sets up routing, providers (Theme, Auth), and layout. |
 | **`index.css`** | Global styles and Tailwind directives. |
 | **`config.ts`** | Global configuration constants (e.g., API base URL). |
 | **`lib/warmup.ts`** | Utility to warm up backend services on app load (excluding VirusTotal to save quota). |
 
 ### Pages (`/src/pages`)
-Top-level page components corresponding to routes.
+Top-level page components corresponding to routes. All pages integrate the reusable SEO component for dynamic meta tags.
 
 | File | Description |
 | :--- | :--- |
-| **`Index.tsx`** | The main dashboard/landing page. Contains the search bar and results panels. |
-| **`LoginPage.tsx`** | User login form. |
-| **`SignupPage.tsx`** | User registration form. |
-| **`ForgotPasswordPage.tsx`** | Form to request a password reset email. |
-| **`ResetPasswordPage.tsx`** | Form to set a new password using a token. |
+| **`LandingPage.tsx`** | The public landing page with feature showcases and CTAs. Includes SEO with keywords for developer visibility. |
+| **`Dashboard.tsx`** | The main authenticated dashboard. Contains scan inputs, results panels, and scan history. |
+| **`Index.tsx`** | Legacy dashboard page (deprecated, redirects to Dashboard). |
+| **`LoginPage.tsx`** | User login form with SEO meta tags. |
+| **`SignupPage.tsx`** | User registration form with SEO meta tags. |
+| **`ForgotPasswordPage.tsx`** | Form to request a password reset email with SEO meta tags. |
+| **`ResetPasswordPage.tsx`** | Form to set a new password using a token with SEO meta tags. |
 | **`NotFound.tsx`** | 404 Error page. |
 
 ### Components (`/src/components`)
@@ -80,6 +82,7 @@ Reusable UI components and feature-specific widgets.
 
 | File | Description |
 | :--- | :--- |
+| **`SEO.tsx`** | **NEW** Reusable SEO component using react-helmet-async for dynamic page titles, meta descriptions, Open Graph, and Twitter Cards. |
 | **`DomainAnalysisCard.tsx`** | Displays WHOIS data and basic domain information. |
 | **`SecurityIntelPanel.tsx`** | Shows threat intelligence data (IPInfo, AbuseIPDB, DNSBL). |
 | **`VirusTotalResults.tsx`** | Displays VirusTotal reputation and passive DNS data. |

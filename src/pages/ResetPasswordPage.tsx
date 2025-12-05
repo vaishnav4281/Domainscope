@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import SEO from '@/components/SEO';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ export default function ResetPasswordPage() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [resetSuccess, setResetSuccess] = useState(false);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,6 +82,10 @@ export default function ResetPasswordPage() {
 
     return (
         <div className="min-h-screen w-full flex flex-col">
+            <SEO
+                title="Reset Password"
+                description="Securely reset your password."
+            />
             <div className="flex-grow flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-[#0B0F19] dark:to-[#0f1419] p-4">
                 {/* Background Effects */}
                 <div className="absolute inset-0 z-0 pointer-events-none">

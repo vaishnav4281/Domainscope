@@ -25,7 +25,19 @@ const app = express();
 
 // Security Middleware
 app.set('trust proxy', 1); // Trust first proxy
-app.use(helmet()); // Secure HTTP headers
+app.use(helmet({
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    },
+})); // Secure HTTP headers
+
+// Add Permissions-Policy header
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'geolocation=(self), microphone=(), camera=()');
+    next();
+});
 app.use(hpp()); // Prevent HTTP Parameter Pollution
 app.use(morgan('combined')); // Production logging
 

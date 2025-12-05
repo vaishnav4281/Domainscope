@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,10 +8,13 @@ import { Mail, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 import Footer from '@/components/Footer';
 
+import SEO from '@/components/SEO';
+
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,6 +61,10 @@ export default function ForgotPasswordPage() {
 
     return (
         <div className="min-h-screen w-full flex flex-col">
+            <SEO
+                title="Forgot Password"
+                description="Reset your DomainScope password securely."
+            />
             <div className="flex-grow flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-[#0B0F19] dark:to-[#0f1419] p-4">
                 {/* Background Effects */}
                 <div className="absolute inset-0 z-0 pointer-events-none">
