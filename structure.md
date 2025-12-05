@@ -124,10 +124,10 @@ Business logic and external API integrations.
 | File | Description |
 | :--- | :--- |
 | **`vt.ts`** | Integration with **VirusTotal API** for reputation and passive DNS. **Includes Redis caching.** |
-| **`ipqs.ts`** | Integration with **IPInfo** for fraud and risk analysis. |
+| **`ipqs.ts`** | IP intelligence with **IPInfo** → **ProxyCheck** → **IP2Location** fallback chain for fraud/risk analysis. |
 | **`abuseipdb.ts`** | Integration with **AbuseIPDB** for IP abuse reports. |
 | **`dnsbl.ts`** | Checks IPs against **DNS Blacklists**. |
-| **`crtsh.ts`** | Integration with **crt.sh** for subdomain discovery. |
+| **`crtsh.ts`** | Subdomain discovery with **crt.sh** → **HackerTarget** → **AlienVault OTX** fallback chain. |
 | **`whois.ts`** | Performs WHOIS lookups and parses the data. |
 | **`email.ts`** | Handles sending emails (verification, welcome, password reset) using **Resend**. |
 | **`dns-extended.ts`** | **NEW** Comprehensive DNS record lookups (MX, NS, TXT, SOA, CAA, PTR). |

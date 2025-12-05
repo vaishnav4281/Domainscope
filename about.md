@@ -21,11 +21,13 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
 
 ### 3. Threat Intelligence
 *   **Feature**: Analyzes domains and IPs for malicious activity, reputation scores, and risk levels.
-*   **Providers**:
+*   **Providers** (with fallback chain):
     *   **VirusTotal**: Global reputation, malware detection, and categorization (`backend/src/services/vt.ts`). **Optimized with Redis caching (1-hour TTL) to respect API quotas.**
     *   **AbuseIPDB**: IP abuse confidence scores and reporting history (`backend/src/services/abuseipdb.ts`).
-    *   **IPInfo**: Fraud scoring, VPN/Proxy/Tor detection, and bot analysis (`backend/src/services/ipqs.ts`).
-    *   **ProxyCheck.io**: Enhanced VPN/Proxy detection and risk scoring (`backend/src/services/ipqs.ts`).
+    *   **IP Intelligence** (3-tier fallback): `backend/src/services/ipqs.ts`
+        *   **IPInfo** (Primary): Fraud scoring, VPN/Proxy/Tor detection, geolocation.
+        *   **ProxyCheck.io** (Fallback 1): Enhanced VPN/Proxy detection and risk scoring.
+        *   **IP2Location.io** (Fallback 2): Geolocation and ISP data when primary sources fail.
     *   **DNSBL**: Checks IP against multiple DNS Blacklists (`backend/src/services/dnsbl.ts`).
 
 ### 4. Web Metadata Extraction
@@ -43,11 +45,14 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
     *   `metascraper-lang`
 
 ### 5. Subdomain Discovery
-*   **Feature**: Automatically finds all subdomains associated with a target domain using Certificate Transparency logs.
-*   **Provider/Library**: `crt.sh` API (Free, no API key required).
-*   **Implementation**: Backend service (`backend/src/services/crtsh.ts`) that fetches and deduplicates subdomain data.
-*   **Optimization**: 24-hour Redis caching to respect rate limits (~5 requests/minute).
-*   **UI**: Premium Blue/Cyan themed component (`src/components/SubdomainResults.tsx`) with direct links to each subdomain.
+*   **Feature**: Automatically finds all subdomains associated with a target domain using multiple sources.
+*   **Providers** (with fallback chain): `backend/src/services/crtsh.ts`
+    *   **crt.sh** (Primary): Certificate Transparency logs - comprehensive and free.
+    *   **HackerTarget** (Fallback 1): DNS enumeration API - 100 requests/day free.
+    *   **AlienVault OTX** (Fallback 2): Passive DNS data when primary sources fail.
+*   **Implementation**: Results from all sources are merged and deduplicated for maximum coverage.
+*   **Optimization**: 24-hour Redis caching. Fallbacks run in parallel for speed.
+*   **UI**: Premium Blue/Cyan themed component (`src/components/SubdomainResults.tsx`) with direct links and source indicators.
 
 ### 6. Customizable Module Selection
 *   **Feature**: Allows users to toggle which intelligence modules to run and display.
@@ -130,12 +135,14 @@ DomainScope is a comprehensive domain intelligence and OSINT platform designed t
 | Service | Purpose | Key File |
 | :--- | :--- | :--- |
 | **VirusTotal** | Domain reputation & Passive DNS | `backend/src/services/vt.ts` |
-| **IPInfo** | VPN/Proxy detection & Fraud Score | `backend/src/services/ipqs.ts` |
-| **ProxyCheck.io** | Enhanced VPN/Proxy detection | `backend/src/services/ipqs.ts` |
+| **IPInfo** | VPN/Proxy detection & Fraud Score (Primary) | `backend/src/services/ipqs.ts` |
+| **ProxyCheck.io** | Enhanced VPN/Proxy detection (Fallback 1) | `backend/src/services/ipqs.ts` |
+| **IP2Location.io** | Geolocation & ISP data (Fallback 2) | `backend/src/services/ipqs.ts` |
 | **AbuseIPDB** | IP Abuse Reporting | `backend/src/services/abuseipdb.ts` |
-| **crt.sh** | Subdomain Discovery via Certificate Transparency | `backend/src/services/crtsh.ts` |
+| **crt.sh** | Subdomain Discovery via Certificate Transparency (Primary) | `backend/src/services/crtsh.ts` |
+| **HackerTarget** | Subdomain Discovery (Fallback 1) | `backend/src/services/crtsh.ts` |
+| **AlienVault OTX** | Open Threat Intelligence & Subdomain Discovery (Fallback 2) | `backend/src/services/crtsh.ts`, `alienvault-otx.ts` |
 | **Resend** | Transactional Emails | `backend/src/services/email.ts` |
 | **Google Safe Browsing** | Malware & Phishing Detection | `backend/src/services/google-safe-browsing.ts` |
 | **URLScan.io** | Website Scanning & Screenshots | `backend/src/services/urlscan.ts` |
-| **AlienVault OTX** | Open Threat Intelligence | `backend/src/services/alienvault-otx.ts` |
 | **Wayback Machine** | Historical Snapshots | `backend/src/services/wayback.ts` |

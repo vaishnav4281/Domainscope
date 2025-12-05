@@ -256,28 +256,34 @@ const circuitBreakerOptions = {
 
 ---
 
-### 2. Subdomain Discovery (Certificate Transparency) **★★★★★**
-**Pattern**: External Data Aggregation + Deduplication
+### 2. Subdomain Discovery (Multi-Source) **★★★★★**
+**Pattern**: External Data Aggregation + Fallback Chain + Deduplication
 
 **Problem Statement**:
-Finding subdomains usually requires brute-forcing (slow, noisy) or expensive APIs. We need a fast, free, and comprehensive way to map a domain's attack surface.
+Finding subdomains usually requires brute-forcing (slow, noisy) or expensive APIs. We need a fast, free, and comprehensive way to map a domain's attack surface. Single-source dependency (crt.sh) can fail due to rate limits or downtime.
 
 **Solution**:
-Leverage Certificate Transparency (CT) logs via `crt.sh`. Every SSL certificate issued is logged publicly. By querying these logs, we can find every subdomain that has ever had an SSL certificate.
+Multi-source subdomain discovery with automatic fallback chain:
+1. **crt.sh** (Primary): Certificate Transparency logs - most comprehensive source.
+2. **HackerTarget** (Fallback 1): DNS enumeration API - free, no key needed.
+3. **AlienVault OTX** (Fallback 2): Passive DNS data from threat intelligence.
 
 **Implementation**:
-- **Source**: `crt.sh` API (PostgreSQL interface)
+- **Primary Source**: `crt.sh` API (PostgreSQL interface for CT logs)
+- **Fallback Strategy**: If crt.sh fails or returns <5 results, fallbacks run in parallel.
 - **Processing**:
-  - Fetch raw certificate data
+  - Fetch from all successful sources
+  - Merge results into a unified Set (automatic deduplication)
   - Extract Common Name (CN) and SANs (Subject Alternative Names)
-  - Deduplicate entries (wildcards, duplicates)
-  - Filter out irrelevant records
-- **Caching**: 24-hour Redis cache to respect rate limits and improve speed.
+  - Filter out wildcards and irrelevant records
+- **Caching**: 24-hour Redis cache with v3 schema (includes source metadata).
+- **Response Format**: Includes `sources` array showing data origins.
 
 **Benefits**:
-- 🔍 **Comprehensive**: Finds subdomains that aren't in wordlists.
-- 🚀 **Fast**: No DNS brute-forcing required.
-- 💰 **Free**: Uses public transparency logs.
+- 🔍 **Comprehensive**: Multiple sources = more subdomains found.
+- 🛡️ **Resilient**: If one source is down, others take over automatically.
+- 🚀 **Fast**: Fallbacks run in parallel, not sequentially.
+- 💰 **Free**: All sources are free to use.
 
 ---
 
@@ -292,8 +298,8 @@ A granular module selection system that allows users to toggle specific scan com
 
 **Features**:
 - **Core Analysis**: DNS + WHOIS (Essential)
-- **Security Intel**: IPInfo + ProxyCheck.io + AbuseIPDB (Threat checks)
-- **Subdomains**: crt.sh discovery
+- **Security Intel**: IPInfo → ProxyCheck.io → IP2Location (3-tier fallback) + AbuseIPDB
+- **Subdomains**: crt.sh → HackerTarget → AlienVault OTX (3-tier fallback)
 - **VirusTotal**: Reputation + Passive DNS
 - **Metadata**: Web scraping
 
