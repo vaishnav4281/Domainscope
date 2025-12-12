@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://domainscope.app/sitemap.xml

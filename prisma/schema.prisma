@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int           @id @default(autoincrement())
+  email     String        @unique
+  password  String
+  createdAt DateTime      @default(now())
+  scans     ScanHistory[]
+  history   UserHistory[]
+}
+
+model ScanHistory {
+  id        Int      @id @default(autoincrement())
+  target    String
+  result    Json
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model UserHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  target    String
+  type      String   @default("single") // single, bulk
+  status    String   @default("completed")
+  results   Json?    // Store full scan results
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
