@@ -245,7 +245,7 @@ const LandingPage = () => {
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <div>
                             <Badge variant="outline" className="mb-6 border-blue-500/30 text-blue-600 dark:text-blue-400 bg-blue-500/10 px-4 py-1.5 text-sm">Real-time Intelligence</Badge>
-                            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white leading-tight">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white leading-tight">
                                 See what others <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">miss in seconds.</span>
                             </h2>
@@ -284,9 +284,9 @@ const LandingPage = () => {
                                     </div>
                                 </div>
                                 {/* Dashboard Content */}
-                                <div className="p-6 h-[320px] overflow-hidden bg-slate-50/50 dark:bg-[#0B1120]">
+                                <div className="p-6 h-auto sm:h-[320px] overflow-hidden bg-slate-50/50 dark:bg-[#0B1120]">
                                     {/* Result Header */}
-                                    <div className="flex justify-between items-start mb-8">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start mb-6 sm:mb-8 gap-4">
                                         <div className="flex items-center gap-4">
                                             <div className="p-3 bg-red-100 dark:bg-red-500/20 rounded-xl border border-red-200 dark:border-red-500/30">
                                                 <AlertTriangle className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -300,14 +300,14 @@ const LandingPage = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="px-4 py-2 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 flex items-center gap-2 shadow-sm">
+                                        <div className="w-full sm:w-auto px-4 py-2 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 flex items-center justify-center sm:justify-start gap-2 shadow-sm">
                                             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                                             <span className="font-bold text-red-700 dark:text-red-400">Score: 92 (Critical)</span>
                                         </div>
                                     </div>
 
                                     {/* Info Grid */}
-                                    <div className="grid grid-cols-3 gap-4 mb-6">
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                                         <div className="p-4 rounded-xl bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 shadow-sm">
                                             <div className="flex items-center gap-2 mb-2 text-slate-500 dark:text-slate-400">
                                                 <Server className="h-4 w-4" />
@@ -333,7 +333,7 @@ const LandingPage = () => {
 
                                     {/* Key Findings List */}
                                     <div className="space-y-3">
-                                        <div className="flex items-center justify-between p-3 rounded-lg bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 hover:border-red-500/30 transition-colors">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 hover:border-red-500/30 transition-colors gap-3 sm:gap-0">
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 rounded-lg bg-red-500/10 text-red-500">
                                                     <Calendar className="h-4 w-4" />
@@ -343,9 +343,9 @@ const LandingPage = () => {
                                                     <div className="text-xs text-slate-500">1 month 12 days</div>
                                                 </div>
                                             </div>
-                                            <Badge variant="outline" className="text-xs border-red-500/30 text-red-600 dark:text-red-400 bg-red-500/10">New</Badge>
+                                            <Badge variant="outline" className="text-xs border-red-500/30 text-red-600 dark:text-red-400 bg-red-500/10 self-start sm:self-center">New</Badge>
                                         </div>
-                                        <div className="flex items-center justify-between p-3 rounded-lg bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 hover:border-purple-500/30 transition-colors">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 hover:border-purple-500/30 transition-colors gap-3 sm:gap-0">
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 rounded-lg bg-purple-500/10 text-purple-500">
                                                     <Network className="h-4 w-4" />
@@ -355,9 +355,9 @@ const LandingPage = () => {
                                                     <div className="text-xs text-slate-500">AS16509 Amazon.com, Inc.</div>
                                                 </div>
                                             </div>
-                                            <Badge variant="outline" className="text-xs border-purple-500/30 text-purple-600 dark:text-purple-400 bg-purple-500/10">Cloud</Badge>
+                                            <Badge variant="outline" className="text-xs border-purple-500/30 text-purple-600 dark:text-purple-400 bg-purple-500/10 self-start sm:self-center">Cloud</Badge>
                                         </div>
-                                        <div className="flex items-center justify-between p-3 rounded-lg bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 hover:border-orange-500/30 transition-colors">
+                                        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 rounded-lg bg-white dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-800 hover:border-orange-500/30 transition-colors gap-3 sm:gap-0">
                                             <div className="flex items-center gap-3">
                                                 <div className="p-2 rounded-lg bg-orange-500/10 text-orange-500">
                                                     <Activity className="h-4 w-4" />
@@ -367,7 +367,7 @@ const LandingPage = () => {
                                                     <div className="text-xs text-slate-500">Traffic routed via anonymizer</div>
                                                 </div>
                                             </div>
-                                            <Badge variant="outline" className="text-xs border-orange-500/30 text-orange-600 dark:text-orange-400 bg-orange-500/10">Warning</Badge>
+                                            <Badge variant="outline" className="text-xs border-orange-500/30 text-orange-600 dark:text-orange-400 bg-orange-500/10 self-start sm:self-center">Warning</Badge>
                                         </div>
                                     </div>
                                 </div>
@@ -774,9 +774,9 @@ const LandingPage = () => {
             </div>
 
             {/* FAQ Section */}
-            <div className="py-24 bg-slate-50 dark:bg-[#080808] border-t border-slate-200 dark:border-white/5">
+            <div className="py-12 sm:py-24 bg-slate-50 dark:bg-[#080808] border-t border-slate-200 dark:border-white/5">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-12">Frequently Asked Questions</h2>
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-slate-900 dark:text-white mb-8 sm:mb-12">Frequently Asked Questions</h2>
                     <Accordion type="single" collapsible className="w-full">
                         <AccordionItem value="item-1">
                             <AccordionTrigger className="text-lg font-medium text-slate-900 dark:text-white">Why is DomainScope considered the best in class?</AccordionTrigger>
