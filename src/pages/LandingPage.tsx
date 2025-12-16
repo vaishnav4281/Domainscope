@@ -472,7 +472,7 @@ const LandingPage = () => {
                                         <ul className="space-y-3">
                                             <li className="flex items-center text-slate-700 dark:text-slate-300"><CheckCircle2 className="h-5 w-5 mr-3 text-emerald-500" /> Bulk Domain Processing</li>
                                             <li className="flex items-center text-slate-700 dark:text-slate-300"><CheckCircle2 className="h-5 w-5 mr-3 text-emerald-500" /> Rapid Scope Filtering</li>
-                                            <li className="flex items-center text-slate-700 dark:text-slate-300"><CheckCircle2 className="h-5 w-5 mr-3 text-emerald-500" /> API Integration</li>
+                                            <li className="flex items-center text-slate-700 dark:text-slate-300"><CheckCircle2 className="h-5 w-5 mr-3 text-emerald-500" /> security Header Grading</li>
                                         </ul>
                                     </div>
                                     <div className="bg-slate-100 dark:bg-[#0A0A0A] p-8 flex items-center justify-center border-l border-slate-200 dark:border-slate-800">
