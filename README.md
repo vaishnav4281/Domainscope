@@ -7,7 +7,8 @@
 
 # 🎨 UI Showcase
 
-<img width="1440" height="1024" alt="image" src="https://github.com/user-attachments/assets/4739db34-ce64-4d71-af92-45b47a9a3d6a" />
+![domainscope](https://github.com/user-attachments/assets/374cd567-2545-4e01-a678-08a769cec813)
+
 
 # 🏗️ System Architecture
 ### High-Level Architecture
